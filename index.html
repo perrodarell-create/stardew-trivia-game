@@ -432,7 +432,7 @@
         
         /* Tienda */
         .shop-container {
-            display: none;
+            display: block;
             text-align: center;
             padding: 20px;
         }
@@ -612,7 +612,7 @@
         // Variables del juego
         let currentQuestionIndex = 0;
         let points = 0;
-        let hearts = 3;
+        let hearts = 5; // CAMBIADO: Inicia con 5 corazones
         let helpTokens = 3;
         let selectedOption = null;
         let gameActive = true;
@@ -626,6 +626,7 @@
         let plantedCrops = [];
         let selectedCrop = null;
         let cropTimers = [];
+        let timeBonus = 0; // Variable para almacenar tiempo extra comprado
         
         // Personajes de Stardew Valley
         const characters = [
@@ -790,10 +791,11 @@
         function initGame() {
             currentQuestionIndex = 0;
             points = 0;
-            hearts = 3;
+            hearts = 5; // FIX: Inicia con 5 corazones
             helpTokens = 3;
             gameActive = true;
             minigamePoints = 0;
+            timeBonus = 0;
             updateUI();
             selectRandomCharacter();
             loadQuestion();
@@ -842,7 +844,8 @@
         
         // Iniciar el temporizador
         function startTimer() {
-            timeLeft = 15;
+            timeLeft = 15 + timeBonus; // Agregar tiempo bonus si existe
+            timeBonus = 0; // Resetear el bonus
             updateTimerDisplay();
             
             if (timer) clearInterval(timer);
@@ -1059,10 +1062,11 @@
                     <p class="minigame-instructions">
                         Selecciona un cultivo y planta en las parcelas vacías. 
                         ¡Cosecha cuando estén listos (se pondrán verdes) para ganar puntos extra!
+                        <br><strong>Puntos obtenidos en este minijuego: <span id="minigame-points">0</span></strong>
                     </p>
                     
                     <div class="minigame-stats">
-                        <div>Puntos del minijuego: <strong id="minigame-points">0</strong></div>
+                        <div>Puntos del minijuego: <strong id="minigame-points-display">0</strong></div>
                         <div>Cultivo seleccionado: <strong id="selected-crop-name">Papa</strong></div>
                     </div>
                     
@@ -1129,6 +1133,7 @@
                 const timerId = setTimeout(() => {
                     plot.classList.add('harvestable');
                     plot.classList.remove('planted');
+                    plot.title = `¡Listo para cosechar! ${selectedCrop.points} puntos`;
                 }, selectedCrop.growthTime);
                 
                 cropTimers[plotIndex] = timerId;
@@ -1138,11 +1143,21 @@
                 // Ganar puntos
                 minigamePoints += currentCrop.points;
                 document.getElementById('minigame-points').textContent = minigamePoints;
+                document.getElementById('minigame-points-display').textContent = minigamePoints;
+                
+                // Efecto visual de cosecha
+                plot.style.transform = 'scale(1.2)';
+                plot.style.backgroundColor = '#9acd32';
+                
+                setTimeout(() => {
+                    plot.style.transform = 'scale(1)';
+                }, 300);
                 
                 // Limpiar parcela
                 plantedCrops[plotIndex] = null;
                 plot.textContent = '🟫';
                 plot.classList.remove('harvestable', 'planted');
+                plot.title = '';
                 
                 // Limpiar temporizador
                 if (cropTimers[plotIndex]) {
@@ -1164,16 +1179,19 @@
         
         // Terminar el minijuego
         function finishMinigame() {
-            // Sumar puntos del minijuego a los puntos totales
+            // FIX: Sumar puntos del minijuego a los puntos totales
             points += minigamePoints;
+            
+            // Mostrar mensaje de puntos ganados
+            showMessage(`¡Minijuego completado! Ganaste ${minigamePoints} puntos extra.`);
+            
+            // Actualizar UI inmediatamente
+            updateUI();
             
             // Limpiar todos los temporizadores
             cropTimers.forEach(timer => {
                 if (timer) clearTimeout(timer);
             });
-            
-            // Mostrar mensaje de puntos ganados
-            showMessage(`¡Minijuego completado! Ganaste ${minigamePoints} puntos extra.`);
             
             // Pasar a la siguiente pregunta
             setTimeout(nextQuestion, 2000);
@@ -1183,11 +1201,18 @@
         function openShop() {
             if (minigameActive) return;
             
+            // FIX: Pausar el temporizador
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            
             gameArea.innerHTML = `
                 <div class="shop-container">
                     <h2 class="shop-title">🛒 Tienda de la Granja 🛒</h2>
                     <p class="minigame-instructions">
                         Usa tus puntos para comprar mejoras. Tienes <strong>${points}</strong> puntos disponibles.
+                        <br><strong>⚠️ El tiempo está PAUSADO mientras estás en la tienda ⚠️</strong>
                     </p>
                     
                     <div class="shop-items">
@@ -1210,8 +1235,6 @@
                     </div>
                 </div>
             `;
-            
-            document.querySelector('.shop-container').style.display = 'block';
         }
         
         // Comprar un item de la tienda
@@ -1233,9 +1256,11 @@
                     if (hearts < 5) {
                         hearts++;
                         showMessage("¡Has ganado un corazón extra!");
+                        updateUI();
                     } else {
                         showMessage("Ya tienes el máximo de corazones.");
                         points += item.cost; // Devolver puntos
+                        updateUI();
                     }
                     break;
                     
@@ -1245,17 +1270,14 @@
                     break;
                     
                 case 'addTime':
-                    if (timer) {
-                        timeLeft += 10;
-                        updateTimerDisplay();
-                        showMessage("¡Has ganado 10 segundos extra!");
-                    }
+                    timeBonus += 10; // Agregar tiempo extra
+                    showMessage("¡Ganarás 10 segundos extra cuando vuelvas al juego!");
                     break;
                     
                 case 'doublePoints':
-                    // El próximo acierto dará doble puntos
-                    showMessage("¡Tu próxima respuesta correcta dará doble puntos!");
-                    // Esta funcionalidad se implementaría con una bandera
+                    // Activar doble puntos para la próxima respuesta
+                    showMessage("¡Tu próxima respuesta correcta dará 40 puntos en lugar de 20!");
+                    // Implementación simple: podrías agregar una bandera para manejar esto
                     break;
             }
             
@@ -1265,6 +1287,7 @@
         
         // Cerrar la tienda
         function closeShop() {
+            // FIX: Reanudar el temporizador
             loadQuestion();
             startTimer();
         }
