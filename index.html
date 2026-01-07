@@ -70,7 +70,7 @@
             image-rendering: pixelated;
         }
         
-        .level-btn:hover {
+        .level-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             background: #4a6572;
             border-color: #f1c40f;
@@ -81,6 +81,11 @@
             color: #2c3e50;
             border-color: #f39c12;
             box-shadow: 0 4px 0 #d35400;
+        }
+        
+        .level-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         /* BARRA DE ESTADÍSTICAS - PIXEL ART */
@@ -411,6 +416,76 @@
             font-size: 0.9rem;
         }
         
+        /* MINIJUEGOS */
+        .minigame-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+        
+        .minigame-canvas {
+            background: #1a252f;
+            border: 4px solid #34495e;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: block;
+            margin: 10px auto;
+            image-rendering: pixelated;
+        }
+        
+        .minigame-title {
+            font-size: 1.5rem;
+            color: #f1c40f;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        .minigame-controls {
+            color: #ecf0f1;
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(52, 73, 94, 0.7);
+            border: 2px solid #2c3e50;
+        }
+        
+        .minigame-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(44, 62, 80, 0.7);
+            border: 2px solid #34495e;
+        }
+        
+        .minigame-stat {
+            text-align: center;
+            color: #ecf0f1;
+        }
+        
+        .minigame-stat-label {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+        }
+        
+        .minigame-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        
+        /* BOTONES DE MINIJUEGO */
+        .minigame-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            width: 100%;
+            justify-content: center;
+        }
+        
         /* BOTONES DE ACCIÓN - PIXEL ART */
         .action-buttons {
             display: grid;
@@ -461,6 +536,14 @@
         .btn-secondary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 0 #d35400;
+        }
+        
+        .btn-minigame {
+            background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+            color: white;
+            border: 3px solid #8e44ad;
+            padding: 10px 20px;
+            font-size: 1rem;
         }
         
         .btn:disabled {
@@ -700,6 +783,19 @@
                 linear-gradient(0deg, #8e44ad 50%, transparent 50%);
             background-size: 30px 30px;
         }
+        
+        /* MENSAJE DE NIVEL BLOQUEADO */
+        .locked-level {
+            position: relative;
+        }
+        
+        .locked-level:after {
+            content: '🔒';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
@@ -708,19 +804,19 @@
         <header class="game-header">
             <h1 class="game-title">🌾 STARDEW VALLEY TRIVIA 🌾</h1>
             <nav class="levels-nav">
-                <button class="level-btn active" onclick="loadLevel(0)">
+                <button class="level-btn active" onclick="loadLevel(0)" id="level-btn-0">
                     <span>🌱</span> Agricultura
                 </button>
-                <button class="level-btn" onclick="loadLevel(1)">
+                <button class="level-btn" onclick="loadLevel(1)" id="level-btn-1" disabled>
                     <span>🎣</span> Pesca
                 </button>
-                <button class="level-btn" onclick="loadLevel(2)">
+                <button class="level-btn" onclick="loadLevel(2)" id="level-btn-2" disabled>
                     <span>🐔</span> Ganadería
                 </button>
-                <button class="level-btn" onclick="loadLevel(3)">
+                <button class="level-btn" onclick="loadLevel(3)" id="level-btn-3" disabled>
                     <span>⛏️</span> Minería
                 </button>
-                <button class="level-btn" onclick="loadLevel(4)">
+                <button class="level-btn" onclick="loadLevel(4)" id="level-btn-4" disabled>
                     <span>🔬</span> Tecnología
                 </button>
             </nav>
@@ -738,7 +834,7 @@
             </div>
             <div class="stat-card" style="border-left-color: #e67e22;">
                 <div class="stat-label">PREGUNTA</div>
-                <div class="stat-value" id="current-question">1/5</div>
+                <div class="stat-value" id="current-question">1/20</div>
             </div>
             <div class="stat-card" style="border-left-color: #8e44ad;">
                 <div class="stat-label">TIEMPO</div>
@@ -762,7 +858,7 @@
                         <div class="level-icon" id="level-icon">🌱</div>
                         <div>
                             <div class="level-title" id="level-title">AGRICULTURA</div>
-                            <div id="level-progress" style="color:#ecf0f1;">Pregunta 1 de 5</div>
+                            <div id="level-progress" style="color:#ecf0f1;">Pregunta 1 de 20</div>
                         </div>
                     </div>
                     <div class="timer-box" id="timer-box">
@@ -806,12 +902,26 @@
                     </div>
                 </div>
 
-                <!-- MINIJUEGO -->
-                <div class="minigame-area" id="minigame-area">
-                    <div class="minigame-title" id="minigame-title" style="color:#f1c40f;text-align:center;margin:10px 0;">🎮 MINIJUEGO</div>
-                    <canvas class="minigame-canvas" id="minigame-canvas" width="400" height="150" style="background:#2c3e50;border:3px solid #34495e;display:block;margin:0 auto;"></canvas>
-                    <div class="minigame-controls" id="minigame-controls" style="color:#ecf0f1;text-align:center;margin:10px 0;">
-                        Presiona 🎮 para jugar
+                <!-- CONTENEDOR DE MINIJUEGOS -->
+                <div class="minigame-container" id="minigame-container">
+                    <div class="minigame-title" id="minigame-title">🎮 MINIJUEGO DEL NIVEL</div>
+                    <canvas class="minigame-canvas" id="minigame-canvas" width="400" height="300"></canvas>
+                    
+                    <div class="minigame-stats" id="minigame-stats">
+                        <!-- Estadísticas del minijuego -->
+                    </div>
+                    
+                    <div class="minigame-controls" id="minigame-controls">
+                        <!-- Controles del minijuego -->
+                    </div>
+                    
+                    <div class="minigame-buttons">
+                        <button class="btn btn-minigame" onclick="restartMinigame()" id="restart-minigame-btn">
+                            🔄 Reiniciar
+                        </button>
+                        <button class="btn btn-minigame" onclick="backToTrivia()" id="back-trivia-btn">
+                            ← Volver a Trivia
+                        </button>
                     </div>
                 </div>
 
@@ -874,7 +984,7 @@
                     icon: "🌱",
                     color: "#27ae60",
                     theme: "agricultura",
-                    questions: 5,
+                    questions: 20,
                     minigame: "planting",
                     tools: [
                         { name: "Azada", icon: "⛏️", desc: "Prepara la tierra" },
@@ -884,7 +994,9 @@
                         { name: "Semillas Zanah", icon: "🥕", desc: "Planta zanahorias" },
                         { name: "Cosechar", icon: "✂️", desc: "Recoge cultivos" }
                     ],
-                    character: "farmer"
+                    character: "farmer",
+                    completed: true,
+                    unlocked: true
                 },
                 {
                     id: 1,
@@ -892,7 +1004,7 @@
                     icon: "🎣",
                     color: "#2980b9",
                     theme: "pesca",
-                    questions: 5,
+                    questions: 20,
                     minigame: "fishing",
                     tools: [
                         { name: "Caña Básica", icon: "🎣", desc: "Pesca simple" },
@@ -902,7 +1014,9 @@
                         { name: "Cebo Dorado", icon: "💰", desc: "Pez especial" },
                         { name: "Cubeta", icon: "🪣", desc: "Guarda peces" }
                     ],
-                    character: "fisherman"
+                    character: "fisherman",
+                    completed: false,
+                    unlocked: false
                 },
                 {
                     id: 2,
@@ -910,7 +1024,7 @@
                     icon: "🐔",
                     color: "#e67e22",
                     theme: "ganaderia",
-                    questions: 5,
+                    questions: 20,
                     minigame: "animals",
                     tools: [
                         { name: "Alimento", icon: "🌾", desc: "Alimenta animales" },
@@ -920,7 +1034,9 @@
                         { name: "Incubadora", icon: "🥚", desc: "Incuba huevos" },
                         { name: "Establo", icon: "🏠", desc: "Guarda animales" }
                     ],
-                    character: "rancher"
+                    character: "rancher",
+                    completed: false,
+                    unlocked: false
                 },
                 {
                     id: 3,
@@ -928,7 +1044,7 @@
                     icon: "⛏️",
                     color: "#7f8c8d",
                     theme: "mineria",
-                    questions: 5,
+                    questions: 20,
                     minigame: "mining",
                     tools: [
                         { name: "Pico", icon: "⛏️", desc: "Rompe rocas" },
@@ -938,7 +1054,9 @@
                         { name: "Casco", icon: "⛑️", desc: "Protege cabeza" },
                         { name: "Mochila", icon: "🎒", desc: "Lleva minerales" }
                     ],
-                    character: "miner"
+                    character: "miner",
+                    completed: false,
+                    unlocked: false
                 },
                 {
                     id: 4,
@@ -946,7 +1064,7 @@
                     icon: "🔬",
                     color: "#8e44ad",
                     theme: "tecnologia",
-                    questions: 5,
+                    questions: 20,
                     minigame: "technology",
                     tools: [
                         { name: "Fertilizante", icon: "🧪", desc: "Mejora cultivos" },
@@ -956,11 +1074,13 @@
                         { name: "Keg", icon: "🍺", desc: "Hace jugo/vino" },
                         { name: "Invernadero", icon: "🏡", desc: "Cultiva todo año" }
                     ],
-                    character: "scientist"
+                    character: "scientist",
+                    completed: false,
+                    unlocked: false
                 }
             ],
 
-            // Personajes PNG (URLs de imágenes pixel art)
+            // Personajes PNG
             characters: {
                 farmer: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=150&h=150&fit=crop&crop=face&auto=format",
                 fisherman: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=150&h=150&fit=crop&crop=face&auto=format",
@@ -969,176 +1089,133 @@
                 scientist: "https://images.unsplash.com/photo-1580894732444-8ecded7900cd?w=150&h=150&fit=crop&crop=face&auto=format"
             },
 
-            // PREGUNTAS SIMPLES (para niños)
+            // PREGUNTAS - 20 POR NIVEL
             questions: {
-                // AGRICULTURA (cultivos básicos)
+                // AGRICULTURA - 5 preguntas por cada estación
                 0: [
-                    { 
-                        q: "¿Qué cultivo es rojo y dulce, crece en primavera?", 
-                        a: ["Zanahoria", "Fresa", "Lechuga", "Papa"], 
-                        correct: 1,
-                        hint: "Es una fruta roja pequeña"
-                    },
-                    { 
-                        q: "¿Qué verdura es naranja y crece bajo tierra?", 
-                        a: ["Tomate", "Zanahoria", "Pepino", "Cebolla"], 
-                        correct: 1,
-                        hint: "Los conejos la adoran"
-                    },
-                    { 
-                        q: "¿Qué cultivo crece en una mazorca?", 
-                        a: ["Arroz", "Trigo", "Maíz", "Cebada"], 
-                        correct: 2,
-                        hint: "Es amarillo y tiene granos"
-                    },
-                    { 
-                        q: "¿Qué fruta es verde por fuera y roja por dentro?", 
-                        a: ["Manzana", "Sandía", "Pera", "Uva"], 
-                        correct: 1,
-                        hint: "Tiene muchas semillas negras"
-                    },
-                    { 
-                        q: "¿Qué necesita una planta para crecer?", 
-                        a: ["Agua y sol", "TV y música", "Ropa y zapatos", "Libros y lápices"], 
-                        correct: 0,
-                        hint: "Sin esto se seca"
-                    }
+                    // PRIMAVERA (5 preguntas)
+                    { q: "¿Qué cultivo es rojo y dulce, crece en primavera?", a: ["Zanahoria", "Fresa", "Lechuga", "Papa"], correct: 1, hint: "Es una fruta roja pequeña" },
+                    { q: "¿Qué verdura es naranja y crece bajo tierra en primavera?", a: ["Tomate", "Zanahoria", "Pepino", "Cebolla"], correct: 1, hint: "Los conejos la adoran" },
+                    { q: "¿Qué flor primaveral tiene pétalos amarillos?", a: ["Rosa", "Girasol", "Tulipán", "Margarita"], correct: 1, hint: "Sigue al sol" },
+                    { q: "¿Qué necesita una planta en primavera para crecer?", a: ["Agua y sol", "Nieve y frío", "Mucho calor", "Sombra"], correct: 0, hint: "Sin esto se seca" },
+                    { q: "¿Qué fruta crece en los árboles en primavera?", a: ["Manzana", "Sandía", "Melón", "Plátano"], correct: 0, hint: "Roja o verde" },
+                    
+                    // VERANO (5 preguntas)
+                    { q: "¿Qué cultivo es amarillo y crece en mazorca en verano?", a: ["Arroz", "Trigo", "Maíz", "Cebada"], correct: 2, hint: "Es amarillo y tiene granos" },
+                    { q: "¿Qué fruta es verde por fuera y roja por dentro en verano?", a: ["Manzana", "Sandía", "Pera", "Uva"], correct: 1, hint: "Tiene muchas semillas negras" },
+                    { q: "¿Qué verdura es redonda y roja en verano?", a: ["Zanahoria", "Tomate", "Pepino", "Lechuga"], correct: 1, hint: "Se usa en ensaladas" },
+                    { q: "¿Qué necesita más una planta en verano?", a: ["Más agua", "Menos sol", "Más frío", "Menos cuidado"], correct: 0, hint: "Por el calor" },
+                    { q: "¿Qué fruto seco se cosecha en verano?", a: ["Nuez", "Castaña", "Bellota", "Piñón"], correct: 0, hint: "Tiene cáscara dura" },
+                    
+                    // OTOÑO (5 preguntas)
+                    { q: "¿Qué calabaza es naranja y se usa en otoño?", a: ["Calabacín", "Calabaza Halloween", "Pepino", "Berenjena"], correct: 1, hint: "Para decorar" },
+                    { q: "¿Qué fruto seco cae de los árboles en otoño?", a: ["Plátano", "Manzana", "Bellota", "Naranja"], correct: 2, hint: "Les gusta a los jabalíes" },
+                    { q: "¿Qué cereal se cosecha en otoño?", a: ["Maíz", "Arroz", "Trigo", "Cebada"], correct: 2, hint: "Para hacer pan" },
+                    { q: "¿Qué verdura es morada y se planta en otoño?", a: ["Zanahoria", "Berenjena", "Papa", "Cebolla"], correct: 1, hint: "Larga y morada" },
+                    { q: "¿Qué árbol pierde sus hojas en otoño?", a: ["Pino", "Roble", "Palmera", "Cactus"], correct: 1, hint: "Hojas caducas" },
+                    
+                    // INVIERNO (5 preguntas)
+                    { q: "¿Qué se puede cultivar en invernadero en invierno?", a: ["Fresa", "Lechuga", "Tomate", "Todas"], correct: 3, hint: "Protegidas del frío" },
+                    { q: "¿Qué necesita protección del frío en invierno?", a: ["Las raíces", "Las hojas", "Las flores", "El tallo"], correct: 0, hint: "Parte subterránea" },
+                    { q: "¿Qué cultivo resiste mejor el frío?", a: ["Espinaca", "Sandía", "Maíz", "Tomate"], correct: 0, hint: "Verde y de hojas" },
+                    { q: "¿Qué se usa para proteger plantas del frío?", a: ["Invernadero", "Ventilador", "Aspersor", "Podadora"], correct: 0, hint: "Estructura de cristal" },
+                    { q: "¿Qué hacen muchas plantas en invierno?", a: ["Crecen rápido", "Descansan", "Florecen", "Dan frutos"], correct: 1, hint: "Periodo de dormancia" }
                 ],
                 
-                // PESCA (vida real simple)
+                // PESCA - 20 preguntas
                 1: [
-                    { 
-                        q: "¿Dónde viven la mayoría de los peces?", 
-                        a: ["En el bosque", "En el agua", "En el cielo", "En la montaña"], 
-                        correct: 1,
-                        hint: "Necesitan nadar"
-                    },
-                    { 
-                        q: "¿Qué usas para atrapar un pez?", 
-                        a: ["Red", "Cesta", "Cuerda", "Todos"], 
-                        correct: 3,
-                        hint: "Puedes usar varios métodos"
-                    },
-                    { 
-                        q: "¿Qué pez es conocido por sus rayas negras?", 
-                        a: ["Salmón", "Atún", "Pez payaso", "Tiburón"], 
-                        correct: 2,
-                        hint: "Vive con anémonas"
-                    },
-                    { 
-                        q: "¿Qué animal marino tiene 8 tentáculos?", 
-                        a: ["Estrella de mar", "Pulpo", "Medusa", "Cangrejo"], 
-                        correct: 1,
-                        hint: "Es muy inteligente"
-                    },
-                    { 
-                        q: "¿Por qué es importante no pescar demasiado?", 
-                        a: ["Para que no se acaben", "Porque es aburrido", "Porque es caro", "Porque duele"], 
-                        correct: 0,
-                        hint: "Para que haya peces mañana"
-                    }
+                    { q: "¿Dónde viven la mayoría de los peces?", a: ["En el bosque", "En el agua", "En el cielo", "En la montaña"], correct: 1, hint: "Necesitan nadar" },
+                    { q: "¿Qué usas para atrapar un pez?", a: ["Red", "Cesta", "Cuerda", "Todos"], correct: 3, hint: "Puedes usar varios métodos" },
+                    { q: "¿Qué pez es conocido por sus rayas negras?", a: ["Salmón", "Atún", "Pez payaso", "Tiburón"], correct: 2, hint: "Vive con anémonas" },
+                    { q: "¿Qué animal marino tiene 8 tentáculos?", a: ["Estrella de mar", "Pulpo", "Medusa", "Cangrejo"], correct: 1, hint: "Es muy inteligente" },
+                    { q: "¿Por qué es importante no pescar demasiado?", a: ["Para que no se acaben", "Porque es aburrido", "Porque es caro", "Porque duele"], correct: 0, hint: "Para que haya peces mañana" },
+                    { q: "¿Qué pez puede saltar fuera del agua?", a: ["Tiburón", "Salmón", "Pez globo", "Anguila"], correct: 1, hint: "Sube ríos" },
+                    { q: "¿Qué pez tiene dientes muy afilados?", a: ["Pez payaso", "Piraña", "Pez ángel", "Pez dorado"], correct: 1, hint: "Vive en ríos sudamericanos" },
+                    { q: "¿Qué pez cambia de color?", a: ["Tiburón", "Pez loro", "Pez gato", "Sardina"], correct: 1, hint: "Tiene pico como loro" },
+                    { q: "¿Qué pez puede caminar fuera del agua?", a: ["Pez sapo", "Pez globo", "Pez luna", "Pez espada"], correct: 0, hint: "Con aletas modificadas" },
+                    { q: "¿Qué pez vive en agua dulce?", a: ["Tiburón", "Atún", "Trucha", "Pez payaso"], correct: 2, hint: "En ríos y lagos" },
+                    { q: "¿Qué pez vive en agua salada?", a: ["Pez gato", "Tiburón", "Carpita", "Trucha"], correct: 1, hint: "En el mar" },
+                    { q: "¿Qué pez puede generar electricidad?", a: ["Pez raya", "Anguila eléctrica", "Pez espada", "Pez luna"], correct: 1, hint: "Da descargas" },
+                    { q: "¿Qué pez tiene forma de disco?", a: ["Pez globo", "Pez disco", "Pez luna", "Pez gato"], correct: 1, hint: "Redondo y plano" },
+                    { q: "¿Qué pez tiene bigotes?", a: ["Pez gato", "Pez dorado", "Pez payaso", "Pez ángel"], correct: 0, hint: "Barbillones" },
+                    { q: "¿Qué pez es conocido por migrar?", a: ["Pez globo", "Salmón", "Pez payaso", "Pez luna"], correct: 1, hint: "Vuelve a donde nació" },
+                    { q: "¿Qué pez puede inflarse?", a: ["Pez globo", "Pez espada", "Pez loro", "Pez ángel"], correct: 0, hint: "Como defensa" },
+                    { q: "¿Qué pez tiene forma de serpiente?", a: ["Anguila", "Pez payaso", "Pez dorado", "Pez gato"], correct: 0, hint: "Largo y delgado" },
+                    { q: "¿Qué pez tiene manchas como leopardo?", a: ["Pez leopardo", "Pez cebra", "Pez tigre", "Pez jaguar"], correct: 0, hint: "Patrones de manchas" },
+                    { q: "¿Qué pez tiene rayas como cebra?", a: ["Pez leopardo", "Pez cebra", "Pez tigre", "Pez jaguar"], correct: 1, hint: "Rayas blancas y negras" },
+                    { q: "¿Qué pez tiene forma de flecha?", a: ["Pez flecha", "Pez arcoíris", "Pez hacha", "Pez mariposa"], correct: 0, hint: "Delgado y rápido" }
                 ],
                 
-                // GANADERÍA (animales básicos)
+                // GANADERÍA - 20 preguntas
                 2: [
-                    { 
-                        q: "¿Qué animal da leche?", 
-                        a: ["Gallina", "Vaca", "Cerdo", "Oveja"], 
-                        correct: 1,
-                        hint: "Es grande con manchas"
-                    },
-                    { 
-                        q: "¿Qué animal pone huevos?", 
-                        a: ["Vaca", "Conejo", "Gallina", "Cabra"], 
-                        correct: 2,
-                        hint: "Hace 'cococo'"
-                    },
-                    { 
-                        q: "¿De qué animal obtenemos lana?", 
-                        a: ["Cerdo", "Pato", "Oveja", "Caballo"], 
-                        correct: 2,
-                        hint: "Parece una nube"
-                    },
-                    { 
-                        q: "¿Qué animal hace 'oink oink'?", 
-                        a: ["Vaca", "Cerdo", "Gallina", "Cabra"], 
-                        correct: 1,
-                        hint: "Le gusta el barro"
-                    },
-                    { 
-                        q: "¿Qué necesitan todos los animales?", 
-                        a: ["Comida y agua", "TV y radio", "Ropa y zapatos", "Libros y cuadernos"], 
-                        correct: 0,
-                        hint: "Sin esto no viven"
-                    }
+                    { q: "¿Qué animal da leche?", a: ["Gallina", "Vaca", "Cerdo", "Oveja"], correct: 1, hint: "Es grande con manchas" },
+                    { q: "¿Qué animal pone huevos?", a: ["Vaca", "Conejo", "Gallina", "Cabra"], correct: 2, hint: "Hace 'cococo'" },
+                    { q: "¿De qué animal obtenemos lana?", a: ["Cerdo", "Pato", "Oveja", "Caballo"], correct: 2, hint: "Parece una nube" },
+                    { q: "¿Qué animal hace 'oink oink'?", a: ["Vaca", "Cerdo", "Gallina", "Cabra"], correct: 1, hint: "Le gusta el barro" },
+                    { q: "¿Qué necesitan todos los animales?", a: ["Comida y agua", "TV y radio", "Ropa y zapatos", "Libros y cuadernos"], correct: 0, hint: "Sin esto no viven" },
+                    { q: "¿Qué animal da miel?", a: ["Abeja", "Mariposa", "Hormiga", "Grillo"], correct: 0, hint: "Hace panal" },
+                    { q: "¿Qué animal da seda?", a: ["Araña", "Gusano de seda", "Mariposa", "Oruga"], correct: 1, hint: "Hace capullo" },
+                    { q: "¿Qué animal tira del arado?", a: ["Perro", "Caballo", "Gato", "Gallina"], correct: 1, hint: "Se monta también" },
+                    { q: "¿Qué animal cuida el rebaño?", a: ["Perro pastor", "Gato", "Gallina", "Pato"], correct: 0, hint: "Ladra y guía" },
+                    { q: "¿Qué animal da plumas?", a: ["Vaca", "Cerdo", "Pato", "Oveja"], correct: 2, hint: "Para almohadas" },
+                    { q: "¿Qué animal come hierba?", a: ["Vaca", "Gato", "Perro", "Gallina"], correct: 0, hint: "Rumia" },
+                    { q: "¿Qué animal come granos?", a: ["Gallina", "Vaca", "Cerdo", "Oveja"], correct: 0, hint: "Picotea" },
+                    { q: "¿Qué animal vive en el establo?", a: ["Caballo", "Pato", "Gallina", "Todos"], correct: 3, hint: "Depende del animal" },
+                    { q: "¿Qué animal necesita bañarse en agua?", a: ["Pato", "Vaca", "Oveja", "Cerdo"], correct: 0, hint: "Nada" },
+                    { q: "¿Qué animal necesita esquilarse?", a: ["Vaca", "Oveja", "Cerdo", "Gallina"], correct: 1, hint: "Para quitar lana" },
+                    { q: "¿Qué animal necesita herraduras?", a: ["Caballo", "Vaca", "Cerdo", "Oveja"], correct: 0, hint: "En los cascos" },
+                    { q: "¿Qué animal da cuero?", a: ["Vaca", "Gallina", "Pato", "Conejo"], correct: 0, hint: "De su piel" },
+                    { q: "¿Qué animal es omnívoro?", a: ["Cerdo", "Vaca", "Oveja", "Caballo"], correct: 0, hint: "Come de todo" },
+                    { q: "¿Qué animal es rumiante?", a: ["Vaca", "Cerdo", "Gallina", "Pato"], correct: 0, hint: "Tiene varias bocas" },
+                    { q: "¿Qué animal tiene pezuñas?", a: ["Caballo", "Perro", "Gato", "Gallina"], correct: 0, hint: "Para correr" }
                 ],
                 
-                // MINERÍA (básico)
+                // MINERÍA - 20 preguntas
                 3: [
-                    { 
-                        q: "¿Qué usamos para romper rocas?", 
-                        a: ["Martillo", "Pico", "Paleta", "Cuchillo"], 
-                        correct: 1,
-                        hint: "Tiene punta afilada"
-                    },
-                    { 
-                        q: "¿Qué metal es amarillo y valioso?", 
-                        a: ["Hierro", "Cobre", "Oro", "Plata"], 
-                        correct: 2,
-                        hint: "Los piratas lo buscan"
-                    },
-                    { 
-                        q: "¿Dónde se encuentra el carbón?", 
-                        a: ["En el cielo", "Bajo tierra", "En el mar", "En los árboles"], 
-                        correct: 1,
-                        hint: "Es negro como la noche"
-                    },
-                    { 
-                        q: "¿Qué piedra preciosa es roja?", 
-                        a: ["Zafiro", "Rubí", "Esmeralda", "Diamante"], 
-                        correct: 1,
-                        hint: "Color de sangre"
-                    },
-                    { 
-                        q: "¿Por qué usamos casco en minas?", 
-                        a: ["Por moda", "Para ver mejor", "Para proteger cabeza", "Para oír mejor"], 
-                        correct: 2,
-                        hint: "Evita golpes"
-                    }
+                    { q: "¿Qué usamos para romper rocas?", a: ["Martillo", "Pico", "Paleta", "Cuchillo"], correct: 1, hint: "Tiene punta afilada" },
+                    { q: "¿Qué metal es amarillo y valioso?", a: ["Hierro", "Cobre", "Oro", "Plata"], correct: 2, hint: "Los piratas lo buscan" },
+                    { q: "¿Dónde se encuentra el carbón?", a: ["En el cielo", "Bajo tierra", "En el mar", "En los árboles"], correct: 1, hint: "Es negro como la noche" },
+                    { q: "¿Qué piedra preciosa es roja?", a: ["Zafiro", "Rubí", "Esmeralda", "Diamante"], correct: 1, hint: "Color de sangre" },
+                    { q: "¿Por qué usamos casco en minas?", a: ["Por moda", "Para ver mejor", "Para proteger cabeza", "Para oír mejor"], correct: 2, hint: "Evita golpes" },
+                    { q: "¿Qué metal es rojizo?", a: ["Oro", "Cobre", "Plata", "Plomo"], correct: 1, hint: "Para cables" },
+                    { q: "¿Qué mineral es negro y se quema?", a: ["Carbón", "Cuarzo", "Mármol", "Granito"], correct: 0, hint: "Para calentar" },
+                    { q: "¿Qué piedra es transparente y valiosa?", a: ["Diamante", "Granito", "Pizarra", "Arenisca"], correct: 0, hint: "El más duro" },
+                    { q: "¿Qué metal es pesado y gris?", a: ["Plomo", "Oro", "Plata", "Cobre"], correct: 0, hint: "Tóxico" },
+                    { q: "¿Qué piedra tiene capas?", a: ["Pizarra", "Mármol", "Granito", "Cuarzo"], correct: 0, hint: "Para pizarras" },
+                    { q: "¿Qué mineral es blanco y suave?", a: ["Talco", "Diamante", "Rubí", "Esmeralda"], correct: 0, hint: "Para polvos" },
+                    { q: "¿Qué piedra es verde?", a: ["Esmeralda", "Rubí", "Zafiro", "Diamante"], correct: 0, hint: "Piedra preciosa" },
+                    { q: "¿Qué mineral es azul?", a: ["Zafiro", "Rubí", "Esmeralda", "Diamante"], correct: 0, hint: "Piedra preciosa" },
+                    { q: "¿Qué metal se oxida?", a: ["Hierro", "Oro", "Plata", "Cobre"], correct: 0, hint: "Se pone marrón" },
+                    { q: "¿Qué mineral es cristalino?", a: ["Cuarzo", "Carbón", "Hierro", "Cobre"], correct: 0, hint: "Transparente" },
+                    { q: "¿Qué piedra se usa para construcción?", a: ["Granito", "Diamante", "Rubí", "Esmeralda"], correct: 0, hint: "Muy dura" },
+                    { q: "¿Qué metal es buen conductor?", a: ["Cobre", "Plomo", "Oro", "Plata"], correct: 0, hint: "Para electricidad" },
+                    { q: "¿Qué mineral es salado?", a: ["Sal", "Azufre", "Cuarzo", "Mica"], correct: 0, hint: "Para cocinar" },
+                    { q: "¿Qué piedra flota en el agua?", a: ["Piedra pómez", "Granito", "Mármol", "Pizarra"], correct: 0, hint: "Con burbujas" },
+                    { q: "¿Qué metal es líquido a temperatura ambiente?", a: ["Mercurio", "Oro", "Plata", "Cobre"], correct: 0, hint: "Tóxico" }
                 ],
                 
-                // TECNOLOGÍA (agrícola simple)
+                // TECNOLOGÍA - 20 preguntas (arregladas)
                 4: [
-                    { 
-                        q: "¿Qué máquina riega solo las plantas?", 
-                        a: ["Sprinkler", "Tractor", "Cosechadora", "Podadora"], 
-                        correct: 0,
-                        hint: "Rocía agua como lluvia"
-                    },
-                    { 
-                        q: "¿Qué hace un invernadero?", 
-                        a: ["Protege del frío", "Da sombra", "Ahuyenta pájaros", "Hace música"], 
-                        correct: 0,
-                        hint: "Permite cultivar en invierno"
-                    },
-                    { 
-                        q: "¿Qué convierte leche en queso?", 
-                        a: ["Licuadora", "Quesera", "Horno", "Nevera"], 
-                        correct: 1,
-                        hint: "Empieza con Q"
-                    },
-                    { 
-                        q: "¿Qué ayuda a las plantas a crecer mejor?", 
-                        a: ["Fertilizante", "Pintura", "Jabón", "Aceite"], 
-                        correct: 0,
-                        hint: "Como vitaminas para plantas"
-                    },
-                    { 
-                        q: "¿Qué usa energía solar en la granja?", 
-                        a: ["Paneles solares", "Molino viento", "Generador", "Baterías"], 
-                        correct: 0,
-                        hint: "Usa el sol"
-                    }
+                    { q: "¿Qué máquina riega solo las plantas?", a: ["Sprinkler", "Tractor", "Cosechadora", "Podadora"], correct: 0, hint: "Rocía agua como lluvia" },
+                    { q: "¿Qué hace un invernadero?", a: ["Protege del frío", "Da sombra", "Ahuyenta pájaros", "Hace música"], correct: 0, hint: "Permite cultivar en invierno" },
+                    { q: "¿Qué convierte leche en queso?", a: ["Licuadora", "Quesera", "Horno", "Nevera"], correct: 1, hint: "Empieza con Q" },
+                    { q: "¿Qué ayuda a las plantas a crecer mejor?", a: ["Fertilizante", "Pintura", "Jabón", "Aceite"], correct: 0, hint: "Como vitaminas para plantas" },
+                    { q: "¿Qué usa energía solar en la granja?", a: ["Paneles solares", "Molino viento", "Generador", "Baterías"], correct: 0, hint: "Usa el sol" },
+                    { q: "¿Qué máquina hace jugo de frutas?", a: ["Keg", "Tractor", "Horno", "Licuadora"], correct: 0, hint: "Para fermentar" },
+                    { q: "¿Qué hace un molino de viento?", a: ["Genera electricidad", "Riega plantas", "Cosecha trigo", "Muele grano"], correct: 0, hint: "Con aspas" },
+                    { q: "¿Qué máquina ordeña vacas?", a: ["Ordeñadora", "Tractor", "Cosechadora", "Podadora"], correct: 0, hint: "Automática" },
+                    { q: "¿Qué conserva alimentos fríos?", a: ["Refrigerador", "Horno", "Lavadora", "Secadora"], correct: 0, hint: "Para no pudrirse" },
+                    { q: "¿Qué máquina corta césped?", a: ["Cortadora", "Tractor", "Cosechadora", "Podadora"], correct: 0, hint: "Con cuchillas" },
+                    { q: "¿Qué procesa la lana?", a: ["Cardadora", "Tractor", "Horno", "Licuadora"], correct: 0, hint: "Para hilar" },
+                    { q: "¿Qué hace la mantequilla?", a: ["Mantequillera", "Quesera", "Keg", "Horno"], correct: 0, hint: "De la crema" },
+                    { q: "¿Qué sistema usa GPS en agricultura?", a: ["Agricultura precisión", "Riego", "Cosecha", "Siembra"], correct: 0, hint: "Con satélites" },
+                    { q: "¿Qué mide la humedad del suelo?", a: ["Sensor humedad", "Termómetro", "Barómetro", "Pluviómetro"], correct: 0, hint: "Para saber regar" },
+                    { q: "¿Qué controla el riego automático?", a: ["Temporizador", "Termómetro", "Barómetro", "Pluviómetro"], correct: 0, hint: "Programable" },
+                    { q: "¿Qué máquina siembra semillas?", a: ["Sembradora", "Tractor", "Cosechadora", "Podadora"], correct: 0, hint: "Automática" },
+                    { q: "¿Qué limpia el grano?", a: ["Limpia granos", "Tractor", "Horno", "Licuadora"], correct: 0, hint: "Quita impurezas" },
+                    { q: "¿Qué hace compost?", a: ["Compostera", "Horno", "Refrigerador", "Lavadora"], correct: 0, hint: "De desechos" },
+                    { q: "¿Qué pasteuriza la leche?", a: ["Pasteurizador", "Horno", "Refrigerador", "Licuadora"], correct: 0, hint: "Para conservar" },
+                    { q: "¿Qué envasa alimentos?", a: ["Envasadora", "Tractor", "Cosechadora", "Podadora"], correct: 0, hint: "Al vacío" }
                 ]
             },
 
@@ -1166,6 +1243,15 @@
                 timePaused: false,
                 shopOpen: false,
                 characterVisible: false
+            },
+
+            // Estados de minijuegos
+            minigames: {
+                current: null,
+                score: 0,
+                active: false,
+                interval: null,
+                keys: {}
             }
         };
 
@@ -1177,11 +1263,26 @@
             // Iniciar temporizador
             startTimer();
             
-            showMessage("¡Bienvenido a Stardew Valley Trivia! Responde preguntas simples y diviértete.");
+            showMessage("¡Bienvenido a Stardew Valley Trivia! Responde 20 preguntas por nivel.");
+            
+            // Prevenir comportamiento por defecto de espacio
+            document.addEventListener('keydown', function(e) {
+                if (e.key === ' ' && GAME.minigames.active) {
+                    e.preventDefault();
+                }
+            });
         }
 
         // ==================== SISTEMA DE NIVELES ====================
         function loadLevel(levelId) {
+            const level = GAME.levels[levelId];
+            
+            // Verificar si el nivel está desbloqueado
+            if (!level.unlocked && levelId > 0) {
+                showMessage("¡Debes completar el nivel anterior primero!");
+                return;
+            }
+            
             // Resetear estado del nivel
             GAME.state.currentLevel = levelId;
             GAME.state.currentQuestion = 0;
@@ -1190,11 +1291,11 @@
             GAME.state.selectedAnswer = null;
             GAME.state.minigameActive = false;
             
-            const level = GAME.levels[levelId];
-            
             // Actualizar UI
             document.querySelectorAll('.level-btn').forEach((btn, idx) => {
                 btn.classList.toggle('active', idx === levelId);
+                // Habilitar solo niveles desbloqueados
+                btn.disabled = !GAME.levels[idx].unlocked;
             });
             
             document.getElementById('level-icon').textContent = level.icon;
@@ -1238,10 +1339,13 @@
             document.getElementById('hint-btn').textContent = `💡 Pista (${GAME.state.hints})`;
             document.getElementById('minigame-btn').disabled = true;
             
+            // Ocultar minijuego si está activo
+            backToTrivia();
+            
             // Cargar primera pregunta
             loadQuestion();
             
-            showMessage(`Nivel cargado: ${level.name}`);
+            showMessage(`Nivel cargado: ${level.name} - ${level.questions} preguntas`);
         }
 
         function updateInventory() {
@@ -1285,9 +1389,9 @@
             
             // Actualizar UI
             document.getElementById('question-text').textContent = question.q;
-            document.getElementById('current-question').textContent = `${GAME.state.currentQuestion + 1}/5`;
-            document.getElementById('level-progress').textContent = `Pregunta ${GAME.state.currentQuestion + 1} de 5`;
-            document.getElementById('progress-fill').style.width = `${(GAME.state.questionsAnswered / 5) * 100}%`;
+            document.getElementById('current-question').textContent = `${GAME.state.currentQuestion + 1}/${GAME.levels[level].questions}`;
+            document.getElementById('level-progress').textContent = `Pregunta ${GAME.state.currentQuestion + 1} de ${GAME.levels[level].questions}`;
+            document.getElementById('progress-fill').style.width = `${(GAME.state.questionsAnswered / GAME.levels[level].questions) * 100}%`;
             
             // Cargar opciones
             const optionsContainer = document.getElementById('options-container');
@@ -1354,9 +1458,9 @@
             // Verificar respuesta
             if (GAME.state.selectedAnswer === question.correct) {
                 // Respuesta correcta
-                GAME.state.totalPoints += 25;
+                GAME.state.totalPoints += 10;
                 GAME.state.questionsAnswered++;
-                showMessage("¡Correcto! +25 puntos");
+                showMessage("¡Correcto! +10 puntos");
                 
                 // Actualizar puntos
                 document.getElementById('total-points').textContent = GAME.state.totalPoints;
@@ -1373,13 +1477,13 @@
             }
             
             // Actualizar progreso
-            document.getElementById('progress-fill').style.width = `${(GAME.state.questionsAnswered / 5) * 100}%`;
+            document.getElementById('progress-fill').style.width = `${(GAME.state.questionsAnswered / GAME.levels[level].questions) * 100}%`;
             
             // Pasar a siguiente pregunta después de 2 segundos
             setTimeout(() => {
                 GAME.state.currentQuestion++;
                 
-                if (GAME.state.currentQuestion < 5) {
+                if (GAME.state.currentQuestion < GAME.levels[level].questions) {
                     loadQuestion();
                     document.getElementById('hint-btn').disabled = false;
                     startTimer();
@@ -1392,15 +1496,24 @@
         function completeLevel() {
             const level = GAME.levels[GAME.state.currentLevel];
             
+            // Marcar nivel como completado
+            level.completed = true;
+            
+            // Desbloquear siguiente nivel si existe
+            if (GAME.state.currentLevel < GAME.levels.length - 1) {
+                GAME.levels[GAME.state.currentLevel + 1].unlocked = true;
+                document.getElementById(`level-btn-${GAME.state.currentLevel + 1}`).disabled = false;
+            }
+            
             // Dar puntos por completar nivel
-            GAME.state.totalPoints += 100;
+            GAME.state.totalPoints += 200;
             document.getElementById('total-points').textContent = GAME.state.totalPoints;
             
             // Habilitar minijuego
             document.getElementById('minigame-btn').disabled = false;
             
             // Mostrar personaje felicitando
-            showCharacter(level.character, `¡${level.name} completado! +100 puntos. ¡Ahora juega el minijuego!`);
+            showCharacter(level.character, `¡${level.name} completado! +200 puntos. ¡Ahora juega el minijuego!`);
             
             // Ocultar personaje después de 5 segundos
             setTimeout(hideCharacter, 5000);
@@ -1519,7 +1632,7 @@
             // Pasar automáticamente a siguiente pregunta
             setTimeout(() => {
                 GAME.state.currentQuestion++;
-                if (GAME.state.currentQuestion < 5) {
+                if (GAME.state.currentQuestion < GAME.levels[GAME.state.currentLevel].questions) {
                     loadQuestion();
                     startTimer();
                 } else {
@@ -1534,6 +1647,1112 @@
                 heartsHTML += i < GAME.state.hearts ? '❤️' : '🤍';
             }
             document.getElementById('hearts-display').innerHTML = heartsHTML;
+        }
+
+        // ==================== MINIJUEGOS COMPLETOS ====================
+        function startMinigame() {
+            const level = GAME.levels[GAME.state.currentLevel];
+            GAME.minigames.current = level.minigame;
+            GAME.minigames.score = 0;
+            GAME.minigames.active = true;
+            
+            // Ocultar inventario y mostrar minijuego
+            document.getElementById('inventory-content').style.display = 'none';
+            document.getElementById('minigame-container').style.display = 'flex';
+            document.getElementById('minigame-btn').disabled = true;
+            
+            // Configurar minijuego específico
+            switch(level.minigame) {
+                case 'planting':
+                    startPlantingGame();
+                    break;
+                case 'fishing':
+                    startFishingGame();
+                    break;
+                case 'animals':
+                    startAnimalsGame();
+                    break;
+                case 'mining':
+                    startMiningGame();
+                    break;
+                case 'technology':
+                    startTechnologyGame();
+                    break;
+            }
+            
+            showMessage(`¡Minijuego de ${level.name} iniciado!`);
+        }
+
+        function backToTrivia() {
+            // Detener minijuego activo
+            if (GAME.minigames.interval) {
+                clearInterval(GAME.minigames.interval);
+                GAME.minigames.interval = null;
+            }
+            
+            // Limpiar eventos de teclado
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
+            
+            GAME.minigames.active = false;
+            GAME.minigames.keys = {};
+            
+            // Mostrar inventario y ocultar minijuego
+            document.getElementById('inventory-content').style.display = 'block';
+            document.getElementById('minigame-container').style.display = 'none';
+            
+            // Limpiar canvas
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function restartMinigame() {
+            if (GAME.minigames.active) {
+                backToTrivia();
+                startMinigame();
+            }
+        }
+
+        // Control de teclado para minijuegos
+        function handleKeyDown(e) {
+            if (GAME.minigames.active) {
+                GAME.minigames.keys[e.key.toLowerCase()] = true;
+                if (e.key === ' ') {
+                    e.preventDefault(); // Prevenir scroll de espacio
+                }
+            }
+        }
+
+        function handleKeyUp(e) {
+            if (GAME.minigames.active) {
+                GAME.minigames.keys[e.key.toLowerCase()] = false;
+            }
+        }
+
+        // ==================== MINIJUEGO 1: PLANTACIÓN (MODIFICADO) ====================
+        function startPlantingGame() {
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            const game = {
+                player: { x: 200, y: 150, size: 20, speed: 4 },
+                plots: [],
+                seeds: [],
+                plants: [],
+                score: 0,
+                time: 60,
+                water: 100,
+                selectedTool: 0,
+                tools: ['⛏️', '🍓', '💧']
+            };
+            
+            // Crear parcelas
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    game.plots.push({
+                        x: 50 + i * 100,
+                        y: 50 + j * 80,
+                        width: 80,
+                        height: 60,
+                        tilled: false,
+                        planted: false,
+                        watered: false,
+                        growth: 0
+                    });
+                }
+            }
+            
+            // Configurar UI
+            document.getElementById('minigame-title').textContent = "🌱 MINIJUEGO DE AGRICULTURA";
+            document.getElementById('minigame-controls').innerHTML = 
+                "CONTROLES: WASD mover, ESPACIO usar herramienta, 1-3 cambiar herramienta";
+            
+            // Dibujar juego
+            function draw() {
+                // Limpiar canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar fondo de campo
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar parcelas
+                game.plots.forEach(plot => {
+                    // Tierra
+                    ctx.fillStyle = plot.tilled ? '#8B4513' : '#654321';
+                    ctx.fillRect(plot.x, plot.y, plot.width, plot.height);
+                    
+                    // Borde
+                    ctx.strokeStyle = '#2c3e50';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(plot.x, plot.y, plot.width, plot.height);
+                    
+                    // Si está plantada
+                    if (plot.planted) {
+                        // Planta
+                        const plantHeight = 10 + plot.growth;
+                        ctx.fillStyle = '#2ecc71';
+                        ctx.fillRect(plot.x + plot.width/2 - 2, plot.y + plot.height - plantHeight, 4, plantHeight);
+                        
+                        // Fruto si está madura
+                        if (plot.growth >= 40) {
+                            ctx.fillStyle = '#e74c3c';
+                            ctx.beginPath();
+                            ctx.arc(plot.x + plot.width/2, plot.y + plot.height - plantHeight - 5, 6, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                    
+                    // Indicador de regado
+                    if (plot.watered) {
+                        ctx.fillStyle = '#3498db';
+                        ctx.fillRect(plot.x + 5, plot.y + 5, 10, 10);
+                    }
+                });
+                
+                // Dibujar jugador
+                ctx.fillStyle = '#f1c40f';
+                ctx.fillRect(game.player.x - game.player.size/2, game.player.y - game.player.size, game.player.size, game.player.size);
+                
+                // Dibujar herramienta
+                ctx.font = '20px Arial';
+                ctx.fillText(game.tools[game.selectedTool], game.player.x - 5, game.player.y - game.player.size - 5);
+                
+                // Dibujar información
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '14px Courier New';
+                ctx.fillText(`Puntos: ${game.score}`, 10, 20);
+                ctx.fillText(`Tiempo: ${Math.ceil(game.time)}s`, 10, 40);
+                ctx.fillText(`Agua: ${game.water}`, 10, 60);
+                ctx.fillText(`Herramienta: ${game.selectedTool + 1}`, 10, 80);
+                
+                // Leyenda de herramientas
+                ctx.fillText("1: Azada ⛏️", 280, 20);
+                ctx.fillText("2: Semillas 🍓", 280, 40);
+                ctx.fillText("3: Regadera 💧", 280, 60);
+            }
+            
+            // Actualizar juego
+            function update() {
+                // Mover jugador
+                if (GAME.minigames.keys['w'] && game.player.y > 30) game.player.y -= game.player.speed;
+                if (GAME.minigames.keys['s'] && game.player.y < 270) game.player.y += game.player.speed;
+                if (GAME.minigames.keys['a'] && game.player.x > 20) game.player.x -= game.player.speed;
+                if (GAME.minigames.keys['d'] && game.player.x < 380) game.player.x += game.player.speed;
+                
+                // Cambiar herramienta
+                if (GAME.minigames.keys['1']) game.selectedTool = 0;
+                if (GAME.minigames.keys['2']) game.selectedTool = 1;
+                if (GAME.minigames.keys['3']) game.selectedTool = 2;
+                
+                // Usar herramienta (ESPACIO)
+                if (GAME.minigames.keys[' ']) {
+                    // Buscar parcela más cercana
+                    let closestPlot = null;
+                    let minDist = Infinity;
+                    
+                    game.plots.forEach(plot => {
+                        const dist = Math.sqrt(
+                            Math.pow(plot.x + plot.width/2 - game.player.x, 2) + 
+                            Math.pow(plot.y + plot.height/2 - game.player.y, 2)
+                        );
+                        
+                        if (dist < 50 && dist < minDist) {
+                            minDist = dist;
+                            closestPlot = plot;
+                        }
+                    });
+                    
+                    if (closestPlot) {
+                        switch(game.selectedTool) {
+                            case 0: // Azada
+                                if (!closestPlot.tilled) {
+                                    closestPlot.tilled = true;
+                                    game.score += 5;
+                                }
+                                break;
+                            case 1: // Semillas
+                                if (closestPlot.tilled && !closestPlot.planted) {
+                                    closestPlot.planted = true;
+                                    closestPlot.growth = 5;
+                                    game.score += 10;
+                                }
+                                break;
+                            case 2: // Regadera
+                                if (closestPlot.planted && game.water > 0 && !closestPlot.watered) {
+                                    closestPlot.watered = true;
+                                    game.water -= 10;
+                                    game.score += 3;
+                                }
+                                break;
+                        }
+                    }
+                    
+                    // Resetear espacio para evitar uso continuo
+                    GAME.minigames.keys[' '] = false;
+                }
+                
+                // Actualizar crecimiento de plantas
+                game.plots.forEach(plot => {
+                    if (plot.planted && plot.watered) {
+                        plot.growth += 0.5;
+                        plot.watered = false; // Necesita riego de nuevo
+                        
+                        // Cosechar si está madura
+                        if (plot.growth >= 50) {
+                            game.score += 20;
+                            plot.planted = false;
+                            plot.tilled = false;
+                            plot.growth = 0;
+                        }
+                    }
+                });
+                
+                // Regenerar agua
+                if (game.water < 100) {
+                    game.water += 0.1;
+                }
+                
+                // Actualizar tiempo
+                game.time -= 1/60;
+                if (game.time <= 0) {
+                    endMinigame(game.score);
+                }
+                
+                draw();
+            }
+            
+            // Configurar eventos de teclado
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            // Iniciar bucle del juego
+            GAME.minigames.interval = setInterval(update, 1000/60);
+            
+            // Actualizar estadísticas
+            updateMinigameStats(game);
+        }
+
+        // ==================== MINIJUEGO 2: PESCA ====================
+        function startFishingGame() {
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            const game = {
+                fisher: { x: 200, y: 50, lineLength: 0, casting: false, reeling: false },
+                fish: [],
+                bubbles: [],
+                score: 0,
+                time: 60,
+                castPower: 0,
+                spacePressed: false,
+                spacePressTime: 0
+            };
+            
+            // Configurar UI
+            document.getElementById('minigame-title').textContent = "🎣 MINIJUEGO DE PESCA";
+            document.getElementById('minigame-controls').innerHTML = 
+                "CONTROLES: ESPACIO para lanzar/recoger (mantener para cargar lanzamiento)";
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Agua
+                ctx.fillStyle = '#2980b9';
+                ctx.fillRect(0, 150, canvas.width, 150);
+                
+                // Olas
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < canvas.width; i += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 150 + Math.sin(Date.now()/1000 + i/30) * 5);
+                    ctx.lineTo(i + 30, 150 + Math.sin(Date.now()/1000 + (i+30)/30) * 5);
+                    ctx.stroke();
+                }
+                
+                // Pescador
+                ctx.fillStyle = '#34495e';
+                ctx.fillRect(game.fisher.x - 10, game.fisher.y, 20, 30);
+                
+                // Caña
+                ctx.strokeStyle = '#7f8c8d';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(game.fisher.x, game.fisher.y + 10);
+                ctx.lineTo(game.fisher.x, game.fisher.y + 30);
+                ctx.stroke();
+                
+                if (game.fisher.casting) {
+                    // Línea
+                    const endX = game.fisher.x;
+                    const endY = game.fisher.y + 30 + game.fisher.lineLength;
+                    
+                    ctx.strokeStyle = '#ecf0f1';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(game.fisher.x, game.fisher.y + 30);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                    
+                    // Anzuelo
+                    ctx.fillStyle = '#f1c40f';
+                    ctx.beginPath();
+                    ctx.arc(endX, endY, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Peces
+                game.fish.forEach(fish => {
+                    ctx.fillStyle = fish.color;
+                    ctx.beginPath();
+                    ctx.ellipse(fish.x, fish.y, 10, 5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Cola
+                    ctx.beginPath();
+                    ctx.moveTo(fish.x - 10, fish.y);
+                    ctx.lineTo(fish.x - 20, fish.y - 5);
+                    ctx.lineTo(fish.x - 20, fish.y + 5);
+                    ctx.closePath();
+                    ctx.fill();
+                });
+                
+                // Información
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '14px Courier New';
+                ctx.fillText(`Puntos: ${game.score}`, 10, 20);
+                ctx.fillText(`Tiempo: ${Math.ceil(game.time)}s`, 10, 40);
+                
+                if (!game.fisher.casting) {
+                    ctx.fillText('Mantén ESPACIO para cargar', 10, 280);
+                } else {
+                    ctx.fillText('Presiona ESPACIO cuando un pez muerda', 10, 280);
+                }
+            }
+            
+            function update() {
+                // Crear peces
+                if (Math.random() < 0.02 && game.fish.length < 6) {
+                    game.fish.push({
+                        x: Math.random() * canvas.width,
+                        y: 170 + Math.random() * 100,
+                        speed: 1 + Math.random() * 2,
+                        direction: Math.random() > 0.5 ? 1 : -1,
+                        color: ['#e74c3c', '#f1c40f', '#1abc9c'][Math.floor(Math.random() * 3)],
+                        biting: false
+                    });
+                }
+                
+                // Actualizar peces
+                game.fish.forEach(fish => {
+                    fish.x += fish.speed * fish.direction;
+                    
+                    if (fish.x < 0 || fish.x > canvas.width) {
+                        fish.direction *= -1;
+                    }
+                    
+                    // Morder anzuelo
+                    if (game.fisher.casting && !fish.biting) {
+                        const hookX = game.fisher.x;
+                        const hookY = game.fisher.y + 30 + game.fisher.lineLength;
+                        const dist = Math.sqrt((fish.x - hookX) ** 2 + (fish.y - hookY) ** 2);
+                        
+                        if (dist < 15 && Math.random() < 0.01) {
+                            fish.biting = true;
+                        }
+                    }
+                    
+                    // Si está mordiendo
+                    if (fish.biting && game.fisher.casting) {
+                        fish.x = game.fisher.x;
+                        fish.y = game.fisher.y + 30 + game.fisher.lineLength;
+                        
+                        // Recoger
+                        if (game.fisher.reeling) {
+                            game.fisher.lineLength -= 2;
+                            if (game.fisher.lineLength <= 0) {
+                                game.score += fish.color === '#f1c40f' ? 30 : 20;
+                                game.fish = game.fish.filter(f => f !== fish);
+                            }
+                        }
+                    }
+                });
+                
+                // Control de espacio
+                if (GAME.minigames.keys[' ']) {
+                    if (!game.spacePressed) {
+                        game.spacePressed = true;
+                        game.spacePressTime = Date.now();
+                        
+                        if (!game.fisher.casting) {
+                            game.castPower = 0;
+                        } else if (game.fisher.casting) {
+                            game.fisher.reeling = true;
+                        }
+                    } else if (!game.fisher.casting) {
+                        game.castPower = Math.min((Date.now() - game.spacePressTime) / 1000, 2);
+                    }
+                } else if (game.spacePressed) {
+                    game.spacePressed = false;
+                    
+                    if (!game.fisher.casting) {
+                        game.fisher.casting = true;
+                        game.fisher.lineLength = 50 + game.castPower * 50;
+                    } else if (game.fisher.casting && game.fisher.reeling) {
+                        game.fisher.reeling = false;
+                    }
+                }
+                
+                // Tiempo
+                game.time -= 1/60;
+                if (game.time <= 0) {
+                    endMinigame(game.score);
+                }
+                
+                draw();
+            }
+            
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            GAME.minigames.interval = setInterval(update, 1000/60);
+            updateMinigameStats(game);
+        }
+
+        // ==================== MINIJUEGO 4: MINERÍA (ARREGLADO) ====================
+        function startMiningGame() {
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            const game = {
+                player: { x: 200, y: 50, size: 20, speed: 4 },
+                blocks: [],
+                minerals: [],
+                score: 0,
+                time: 60,
+                stamina: 100,
+                depth: 0
+            };
+            
+            // Crear bloques
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 8; x++) {
+                    game.blocks.push({
+                        x: x * 50,
+                        y: 80 + y * 40,
+                        width: 50,
+                        height: 40,
+                        health: 100,
+                        containsMineral: Math.random() > 0.6,
+                        mineralType: Math.random() > 0.8 ? 'gem' : Math.random() > 0.6 ? 'gold' : 'iron'
+                    });
+                }
+            }
+            
+            // Configurar UI
+            document.getElementById('minigame-title').textContent = "⛏️ MINIJUEGO DE MINERÍA";
+            document.getElementById('minigame-controls').innerHTML = 
+                "CONTROLES: WASD mover, ESPACIO minar, recoge minerales automáticamente";
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Fondo cueva
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Entrada
+                ctx.fillStyle = '#7f8c8d';
+                ctx.fillRect(0, 0, canvas.width, 80);
+                
+                // Jugador
+                ctx.fillStyle = '#95a5a6';
+                ctx.fillRect(game.player.x - game.player.size/2, game.player.y - game.player.size, game.player.size, game.player.size);
+                
+                // Pico
+                ctx.strokeStyle = '#34495e';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(game.player.x, game.player.y - game.player.size/2);
+                ctx.lineTo(game.player.x + 15, game.player.y - game.player.size/2 - 10);
+                ctx.stroke();
+                
+                // Bloques
+                game.blocks.forEach(block => {
+                    // Color según tipo de mineral
+                    let color = '#7f8c8d';
+                    if (block.containsMineral) {
+                        color = block.mineralType === 'gem' ? '#9b59b6' : 
+                                block.mineralType === 'gold' ? '#f1c40f' : '#bdc3c7';
+                    }
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillRect(block.x, block.y, block.width, block.height);
+                    
+                    // Borde
+                    ctx.strokeStyle = '#34495e';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(block.x, block.y, block.width, block.height);
+                    
+                    // Salud
+                    if (block.health < 100) {
+                        ctx.fillStyle = '#e74c3c';
+                        ctx.fillRect(block.x, block.y + block.height - 5, (block.width * block.health) / 100, 3);
+                    }
+                });
+                
+                // Minerales
+                game.minerals.forEach(mineral => {
+                    ctx.fillStyle = mineral.color;
+                    ctx.beginPath();
+                    ctx.arc(mineral.x, mineral.y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Información
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '14px Courier New';
+                ctx.fillText(`Puntos: ${game.score}`, 10, 20);
+                ctx.fillText(`Tiempo: ${Math.ceil(game.time)}s`, 10, 40);
+                ctx.fillText(`Energía: ${Math.ceil(game.stamina)}`, 10, 60);
+            }
+            
+            function update() {
+                // Mover
+                if (GAME.minigames.keys['w'] && game.player.y > 30) game.player.y -= game.player.speed;
+                if (GAME.minigames.keys['s'] && game.player.y < 280) game.player.y += game.player.speed;
+                if (GAME.minigames.keys['a'] && game.player.x > 20) game.player.x -= game.player.speed;
+                if (GAME.minigames.keys['d'] && game.player.x < 380) game.player.x += game.player.speed;
+                
+                // Minar (ESPACIO)
+                if (GAME.minigames.keys[' '] && game.stamina >= 5) {
+                    let mined = false;
+                    
+                    game.blocks.forEach(block => {
+                        if (block.health > 0) {
+                            const dist = Math.sqrt(
+                                Math.pow(block.x + block.width/2 - game.player.x, 2) + 
+                                Math.pow(block.y + block.height/2 - game.player.y, 2)
+                            );
+                            
+                            if (dist < 40) {
+                                block.health -= 10;
+                                game.stamina -= 5;
+                                game.score += 1;
+                                
+                                if (block.health <= 0 && block.containsMineral) {
+                                    // Crear mineral
+                                    const points = block.mineralType === 'gem' ? 50 : 
+                                                  block.mineralType === 'gold' ? 30 : 10;
+                                    const color = block.mineralType === 'gem' ? '#9b59b6' : 
+                                                 block.mineralType === 'gold' ? '#f1c40f' : '#bdc3c7';
+                                    
+                                    game.minerals.push({
+                                        x: block.x + block.width/2,
+                                        y: block.y + block.height/2,
+                                        points: points,
+                                        color: color,
+                                        type: block.mineralType
+                                    });
+                                    
+                                    game.depth += 1;
+                                }
+                                mined = true;
+                            }
+                        }
+                    });
+                    
+                    if (mined) {
+                        GAME.minigames.keys[' '] = false; // Resetear espacio
+                    }
+                }
+                
+                // Actualizar minerales (caída)
+                game.minerals.forEach(mineral => {
+                    mineral.y += 1;
+                    
+                    // Recolectar si está cerca
+                    const dist = Math.sqrt(
+                        Math.pow(mineral.x - game.player.x, 2) + 
+                        Math.pow(mineral.y - game.player.y, 2)
+                    );
+                    
+                    if (dist < 25) {
+                        game.score += mineral.points;
+                        game.minerals = game.minerals.filter(m => m !== mineral);
+                    }
+                });
+                
+                // Regenerar energía
+                if (game.stamina < 100) {
+                    game.stamina += 0.2;
+                }
+                
+                // Tiempo
+                game.time -= 1/60;
+                if (game.time <= 0) {
+                    endMinigame(game.score);
+                }
+                
+                draw();
+            }
+            
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            GAME.minigames.interval = setInterval(update, 1000/60);
+            updateMinigameStats(game);
+        }
+
+        // ==================== MINIJUEGO 5: TECNOLOGÍA (ARREGLADO) ====================
+        function startTechnologyGame() {
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            const game = {
+                player: { x: 200, y: 150, size: 20, speed: 4 },
+                machines: [],
+                resources: [],
+                products: [],
+                score: 0,
+                time: 60,
+                energy: 100,
+                selectedResource: null
+            };
+            
+            // Máquinas
+            const machineData = [
+                {x: 100, y: 100, type: 'sprinkler', input: 'none', output: 'agua', color: '#27ae60'},
+                {x: 200, y: 100, type: 'quesera', input: 'leche', output: 'queso', color: '#f1c40f'},
+                {x: 300, y: 100, type: 'mayonera', input: 'huevo', output: 'mayonesa', color: '#3498db'},
+                {x: 150, y: 200, type: 'keg', input: 'fruta', output: 'jugo', color: '#8e44ad'},
+                {x: 250, y: 200, type: 'incubadora', input: 'huevo', output: 'pollo', color: '#e74c3c'}
+            ];
+            
+            machineData.forEach(data => {
+                game.machines.push({
+                    ...data,
+                    processing: false,
+                    progress: 0,
+                    hasInput: false,
+                    hasOutput: false
+                });
+            });
+            
+            // Configurar UI
+            document.getElementById('minigame-title').textContent = "🔬 MINIJUEGO DE TECNOLOGÍA";
+            document.getElementById('minigame-controls').innerHTML = 
+                "CONTROLES: WASD mover, ESPACIO usar máquina, R recoger recurso";
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Fondo
+                ctx.fillStyle = '#2c3e50';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Rejilla
+                ctx.strokeStyle = '#34495e';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 20) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, canvas.height);
+                    ctx.stroke();
+                }
+                
+                // Jugador
+                ctx.fillStyle = '#9b59b6';
+                ctx.fillRect(game.player.x - game.player.size/2, game.player.y - game.player.size, game.player.size, game.player.size);
+                
+                // Máquinas
+                game.machines.forEach(machine => {
+                    // Cuerpo
+                    ctx.fillStyle = machine.color;
+                    ctx.fillRect(machine.x - 25, machine.y - 25, 50, 50);
+                    
+                    // Borde
+                    ctx.strokeStyle = '#ecf0f1';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(machine.x - 25, machine.y - 25, 50, 50);
+                    
+                    // Indicador de entrada
+                    if (machine.hasInput) {
+                        ctx.fillStyle = '#e74c3c';
+                        ctx.beginPath();
+                        ctx.arc(machine.x - 15, machine.y - 15, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    // Indicador de salida
+                    if (machine.hasOutput) {
+                        ctx.fillStyle = '#2ecc71';
+                        ctx.beginPath();
+                        ctx.arc(machine.x + 15, machine.y - 15, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    // Progreso
+                    if (machine.processing) {
+                        ctx.fillStyle = '#27ae60';
+                        ctx.fillRect(machine.x - 20, machine.y + 15, (40 * machine.progress) / 100, 5);
+                    }
+                });
+                
+                // Recursos
+                game.resources.forEach(resource => {
+                    ctx.fillStyle = resource.color;
+                    ctx.beginPath();
+                    ctx.arc(resource.x, resource.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Icono
+                    ctx.fillStyle = '#2c3e50';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(resource.icon, resource.x, resource.y + 4);
+                });
+                
+                // Información
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '14px Courier New';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Puntos: ${game.score}`, 10, 20);
+                ctx.fillText(`Tiempo: ${Math.ceil(game.time)}s`, 10, 40);
+                ctx.fillText(`Energía: ${Math.ceil(game.energy)}`, 10, 60);
+                
+                // Leyenda
+                ctx.fillText("R: Recoger recurso", 280, 20);
+                ctx.fillText("ESPACIO: Usar máquina", 280, 40);
+            }
+            
+            function update() {
+                // Mover
+                if (GAME.minigames.keys['w'] && game.player.y > 30) game.player.y -= game.player.speed;
+                if (GAME.minigames.keys['s'] && game.player.y < 270) game.player.y += game.player.speed;
+                if (GAME.minigames.keys['a'] && game.player.x > 20) game.player.x -= game.player.speed;
+                if (GAME.minigames.keys['d'] && game.player.x < 380) game.player.x += game.player.speed;
+                
+                // Recoger recurso (R)
+                if (GAME.minigames.keys['r']) {
+                    // Crear recurso aleatorio
+                    const resources = [
+                        {type: 'leche', icon: '🥛', color: '#ffffff'},
+                        {type: 'huevo', icon: '🥚', color: '#f1c40f'},
+                        {type: 'fruta', icon: '🍎', color: '#e74c3c'}
+                    ];
+                    
+                    const resource = resources[Math.floor(Math.random() * resources.length)];
+                    game.resources.push({
+                        x: game.player.x,
+                        y: game.player.y,
+                        ...resource
+                    });
+                    
+                    GAME.minigames.keys['r'] = false;
+                }
+                
+                // Usar máquina (ESPACIO)
+                if (GAME.minigames.keys[' ']) {
+                    let machineUsed = false;
+                    
+                    game.machines.forEach(machine => {
+                        const dist = Math.sqrt(
+                            Math.pow(machine.x - game.player.x, 2) + 
+                            Math.pow(machine.y - game.player.y, 2)
+                        );
+                        
+                        if (dist < 40) {
+                            // Si no tiene entrada, buscar recurso
+                            if (!machine.hasInput && machine.input !== 'none') {
+                                let resourceToUse = null;
+                                let resourceDist = Infinity;
+                                
+                                game.resources.forEach(resource => {
+                                    const resDist = Math.sqrt(
+                                        Math.pow(resource.x - game.player.x, 2) + 
+                                        Math.pow(resource.y - game.player.y, 2)
+                                    );
+                                    
+                                    if (resDist < 30 && resource.type === machine.input && resDist < resourceDist) {
+                                        resourceDist = resDist;
+                                        resourceToUse = resource;
+                                    }
+                                });
+                                
+                                if (resourceToUse) {
+                                    machine.hasInput = true;
+                                    game.resources = game.resources.filter(r => r !== resourceToUse);
+                                    game.score += 10;
+                                    machineUsed = true;
+                                }
+                            }
+                            
+                            // Si tiene entrada y no está procesando, comenzar
+                            if (machine.hasInput && !machine.processing && !machine.hasOutput && game.energy >= 10) {
+                                machine.processing = true;
+                                game.energy -= 10;
+                                machineUsed = true;
+                            }
+                            
+                            // Si tiene salida, recolectar
+                            if (machine.hasOutput) {
+                                machine.hasOutput = false;
+                                game.score += 30;
+                                machineUsed = true;
+                            }
+                        }
+                    });
+                    
+                    if (machineUsed) {
+                        GAME.minigames.keys[' '] = false;
+                    }
+                }
+                
+                // Actualizar máquinas
+                game.machines.forEach(machine => {
+                    if (machine.processing) {
+                        machine.progress += 1;
+                        
+                        if (machine.progress >= 100) {
+                            machine.processing = false;
+                            machine.progress = 0;
+                            machine.hasInput = false;
+                            machine.hasOutput = true;
+                        }
+                    }
+                });
+                
+                // Regenerar energía
+                if (game.energy < 100) {
+                    game.energy += 0.2;
+                }
+                
+                // Tiempo
+                game.time -= 1/60;
+                if (game.time <= 0) {
+                    endMinigame(game.score);
+                }
+                
+                draw();
+            }
+            
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            GAME.minigames.interval = setInterval(update, 1000/60);
+            updateMinigameStats(game);
+        }
+
+        // Minijuego 3: Ganadería (simplificado para mantener el código)
+        function startAnimalsGame() {
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 400;
+            canvas.height = 300;
+            
+            const game = {
+                player: { x: 200, y: 150, size: 20, speed: 4 },
+                animals: [],
+                score: 0,
+                time: 60,
+                food: 10
+            };
+            
+            // Configurar UI
+            document.getElementById('minigame-title').textContent = "🐔 MINIJUEGO DE GANADERÍA";
+            document.getElementById('minigame-controls').innerHTML = 
+                "CONTROLES: WASD mover, F alimentar, C cepillar, ESPACIO recolectar";
+            
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Pasto
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Cercas
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(0, 30, canvas.width, 10);
+                ctx.fillRect(0, 260, canvas.width, 10);
+                
+                // Animales
+                game.animals.forEach(animal => {
+                    ctx.fillStyle = animal.color;
+                    ctx.beginPath();
+                    ctx.ellipse(animal.x, animal.y, animal.size, animal.size/1.5, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Producto si está listo
+                    if (animal.productReady) {
+                        ctx.fillStyle = animal.productColor;
+                        ctx.beginPath();
+                        ctx.arc(animal.x, animal.y - animal.size, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+                
+                // Jugador
+                ctx.fillStyle = '#e67e22';
+                ctx.fillRect(game.player.x - game.player.size/2, game.player.y - game.player.size, game.player.size, game.player.size);
+                
+                // Información
+                ctx.fillStyle = '#ecf0f1';
+                ctx.font = '14px Courier New';
+                ctx.fillText(`Puntos: ${game.score}`, 10, 20);
+                ctx.fillText(`Tiempo: ${Math.ceil(game.time)}s`, 10, 40);
+                ctx.fillText(`Comida: ${game.food}`, 10, 60);
+            }
+            
+            function update() {
+                // Mover
+                if (GAME.minigames.keys['w'] && game.player.y > 50) game.player.y -= game.player.speed;
+                if (GAME.minigames.keys['s'] && game.player.y < 250) game.player.y += game.player.speed;
+                if (GAME.minigames.keys['a'] && game.player.x > 20) game.player.x -= game.player.speed;
+                if (GAME.minigames.keys['d'] && game.player.x < 380) game.player.x += game.player.speed;
+                
+                // Crear animales
+                if (Math.random() < 0.01 && game.animals.length < 6) {
+                    const types = [
+                        {color: '#ecf0f1', productColor: '#ffffff', size: 15},
+                        {color: '#f1c40f', productColor: '#f1c40f', size: 12},
+                        {color: '#7f8c8d', productColor: '#ffffff', size: 18}
+                    ];
+                    const type = types[Math.floor(Math.random() * types.length)];
+                    
+                    game.animals.push({
+                        x: 50 + Math.random() * 300,
+                        y: 100 + Math.random() * 120,
+                        size: type.size,
+                        color: type.color,
+                        productColor: type.productColor,
+                        productReady: false,
+                        happiness: 50,
+                        lastAction: Date.now()
+                    });
+                }
+                
+                // Acciones
+                game.animals.forEach(animal => {
+                    // Alimentar (F)
+                    if (GAME.minigames.keys['f'] && game.food > 0) {
+                        const dist = Math.sqrt(
+                            Math.pow(animal.x - game.player.x, 2) + 
+                            Math.pow(animal.y - game.player.y, 2)
+                        );
+                        
+                        if (dist < 30 && animal.happiness < 100) {
+                            animal.happiness += 20;
+                            game.food--;
+                            game.score += 5;
+                            GAME.minigames.keys['f'] = false;
+                        }
+                    }
+                    
+                    // Recolectar (ESPACIO)
+                    if (GAME.minigames.keys[' ']) {
+                        const dist = Math.sqrt(
+                            Math.pow(animal.x - game.player.x, 2) + 
+                            Math.pow(animal.y - game.player.y, 2)
+                        );
+                        
+                        if (dist < 30 && animal.productReady) {
+                            animal.productReady = false;
+                            game.score += 15;
+                            GAME.minigames.keys[' '] = false;
+                        }
+                    }
+                    
+                    // Producir si está feliz
+                    if (animal.happiness > 70 && !animal.productReady && Math.random() < 0.01) {
+                        animal.productReady = true;
+                    }
+                    
+                    // Disminuir felicidad con el tiempo
+                    if (Date.now() - animal.lastAction > 5000) {
+                        animal.happiness -= 0.1;
+                        animal.lastAction = Date.now();
+                    }
+                });
+                
+                // Tiempo
+                game.time -= 1/60;
+                if (game.time <= 0) {
+                    endMinigame(game.score);
+                }
+                
+                draw();
+            }
+            
+            document.addEventListener('keydown', handleKeyDown);
+            document.addEventListener('keyup', handleKeyUp);
+            
+            GAME.minigames.interval = setInterval(update, 1000/60);
+            updateMinigameStats(game);
+        }
+
+        function updateMinigameStats(game) {
+            const statsHTML = `
+                <div class="minigame-stat">
+                    <div class="minigame-stat-label">PUNTOS</div>
+                    <div class="minigame-stat-value">${Math.round(game.score)}</div>
+                </div>
+                <div class="minigame-stat">
+                    <div class="minigame-stat-label">TIEMPO</div>
+                    <div class="minigame-stat-value">${Math.ceil(game.time)}s</div>
+                </div>
+                ${game.stamina !== undefined ? `
+                <div class="minigame-stat">
+                    <div class="minigame-stat-label">ENERGÍA</div>
+                    <div class="minigame-stat-value">${Math.ceil(game.stamina)}</div>
+                </div>
+                ` : ''}
+                ${game.water !== undefined ? `
+                <div class="minigame-stat">
+                    <div class="minigame-stat-label">AGUA</div>
+                    <div class="minigame-stat-value">${Math.ceil(game.water)}</div>
+                </div>
+                ` : ''}
+                ${game.food !== undefined ? `
+                <div class="minigame-stat">
+                    <div class="minigame-stat-label">COMIDA</div>
+                    <div class="minigame-stat-value">${game.food}</div>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('minigame-stats').innerHTML = statsHTML;
+        }
+
+        function endMinigame(score) {
+            if (GAME.minigames.interval) {
+                clearInterval(GAME.minigames.interval);
+                GAME.minigames.interval = null;
+            }
+            
+            // Convertir puntos del minijuego a puntos principales
+            const convertedPoints = Math.floor(score / 2);
+            GAME.state.totalPoints += convertedPoints;
+            document.getElementById('total-points').textContent = GAME.state.totalPoints;
+            
+            // Mostrar resultados
+            showMessage(`¡Minijuego completado! Ganaste ${convertedPoints} puntos. Puntos totales: ${GAME.state.totalPoints}`);
+            
+            // Volver a trivia
+            setTimeout(() => {
+                backToTrivia();
+                document.getElementById('minigame-btn').disabled = false;
+            }, 2000);
         }
 
         // ==================== TIENDA ====================
@@ -1559,7 +2778,7 @@
             document.getElementById('shop-overlay').style.display = 'none';
             
             // Si hay pregunta activa, reanudar temporizador
-            if (GAME.state.currentQuestion < 5) {
+            if (GAME.state.currentQuestion < GAME.levels[GAME.state.currentLevel].questions) {
                 startTimer();
             }
         }
@@ -1612,27 +2831,22 @@
                     }
                     break;
                 case 'addTime':
-                    showMessage("⏰ +10 segundos en cada pregunta");
+                    GAME.state.timeLeft += 10;
+                    updateTimerDisplay();
+                    showMessage("⏰ +10 segundos en esta pregunta");
                     break;
                 case 'addHints':
                     GAME.state.hints += 3;
                     document.getElementById('hint-btn').textContent = `💡 Pista (${GAME.state.hints})`;
                     showMessage("💡 +3 pistas adicionales");
                     break;
-                case 'iridiumRod':
-                case 'betterSeeds':
-                    showMessage(`¡${item.name} adquirido! Se aplicará en el minijuego`);
+                default:
+                    showMessage(`¡${item.name} adquirido!`);
                     break;
             }
             
             showMessage(`¡${item.name} comprado por ${item.price} puntos!`);
             updateShopItems();
-        }
-
-        // ==================== MINIJUEGOS ====================
-        function startMinigame() {
-            const level = GAME.levels[GAME.state.currentLevel];
-            showMessage(`¡Minijuego de ${level.name} iniciado! Próximamente...`);
         }
 
         // ==================== UTILIDADES ====================
@@ -1696,8 +2910,28 @@
                 characterVisible: false
             };
             
+            // Resetear niveles
+            GAME.levels.forEach((level, index) => {
+                level.completed = index === 0;
+                level.unlocked = index === 0;
+            });
+            
+            // Resetear minijuegos
+            GAME.minigames = {
+                current: null,
+                score: 0,
+                active: false,
+                interval: null,
+                keys: {}
+            };
+            
             // Limpiar mensajes
             document.querySelectorAll('.message-toast').forEach(msg => msg.remove());
+            
+            // Limpiar canvas
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             // Reiniciar juego
             loadLevel(0);
