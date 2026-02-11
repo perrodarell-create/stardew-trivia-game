@@ -818,10 +818,6 @@ const IMG = {
 
 // ==================== BASE DE DATOS (100 PREGUNTAS) ====================
 const DB = {
-    // NIVEL 1: AGRICULTURA (5 por estación)
-    
-    // NIVEL 3: GANADERÍA
-    {
     // NIVEL 1: AGRICULTURA (20 Preguntas - 5 por estación)
     0: {
         "Primavera": [
@@ -880,37 +876,38 @@ const DB = {
         {q: "¿Qué animal cacarea y pone huevos que comemos en el desayuno?", a: ["El pato", "El pavo", "La gallina", "El ganso"], c: 2},
         {q: "¿Qué animal ayuda a menudo al granjero a cuidar y guiar a las ovejas?", a: ["La cabra", "El gato", "El perro pastor", "El burro"], c: 2},
         {q: "¿Qué se utiliza para ordeñar vacas en las granjas modernas grandes?", a: ["Mangueras de agua", "Cubos de plástico solamente", "Máquinas ordeñadoras", "Tijeras"], c: 2}
+    ],
+    
+    // NIVEL 4: MINERÍA (10 Preguntas)
+    3: [
+        {q: "¿Qué mineral se extrae comúnmente para fabricar herramientas agrícolas?", a: ["Hierro", "Oro", "Plata", "Cobre"], c: 0},
+        {q: "¿Qué metal precioso se encuentra a veces en terrenos de granjas?", a: ["Oro", "Hierro", "Aluminio", "Bronce"], c: 0},
+        {q: "¿Qué roca se tritura para mejorar suelos ácidos?", a: ["Caliza", "Granito", "Mármol", "Pizarra"], c: 0},
+        {q: "¿Qué mineral es esencial para la fabricación de fertilizantes?", a: ["Fosfato", "Hierro", "Cobre", "Carbón"], c: 0},
+        {q: "¿Qué tipo de mina se excava en la superficie de la tierra?", a: ["Cielo abierto", "Subterránea", "Aluvial", "Marina"], c: 0},
+        {q: "¿Qué herramienta tradicional se usa en minería para romper rocas?", a: ["Pico", "Azada", "Pala", "Rastrillo"], c: 0},
+        {q: "¿Qué mineral se extrae para obtener sal?", a: ["Halita", "Calcita", "Cuarzo", "Yeso"], c: 0},
+        {q: "¿Qué máquina perforadora se usa en minería?", a: ["Taladro", "Tractor", "Cosechadora", "Empacadora"], c: 0},
+        {q: "¿Qué metal se usa para cableado eléctrico en granjas?", a: ["Cobre", "Hierro", "Acero", "Aluminio"], c: 0},
+        {q: "¿Qué material se extrae de canteras para construcción?", a: ["Piedra", "Petróleo", "Gas", "Carbón"], c: 0}
+    ],
+    
+    // NIVEL 5: TECNOLOGÍA (10 Preguntas)
+    4: [
+        {q: "¿Qué máquina automatizada ara la tierra?", a: ["Tractor", "Cosechadora", "Sembradora", "Rastrillo"], c: 0},
+        {q: "¿Qué dispositivo usa GPS para guiar maquinaria?", a: ["Piloto automático", "Drone", "Sensor", "Riego"], c: 0},
+        {q: "¿Qué tecnología aérea monitorea cultivos?", a: ["Drones", "Satélites", "Aviones", "Globos"], c: 0},
+        {q: "¿Qué sistema automatizado administra el agua?", a: ["Riego inteligente", "Manguera", "Regadera", "Canal"], c: 0},
+        {q: "¿Qué sensor mide la humedad del suelo?", a: ["Higrómetro", "Termómetro", "Barómetro", "Anemómetro"], c: 0},
+        {q: "¿Qué software gestiona la producción agrícola?", a: ["ERP agrícola", "Excel", "Word", "Photoshop"], c: 0},
+        {q: "¿Qué energía renovable se instala en granjas?", a: ["Paneles solares", "Carbón", "Petróleo", "Gas"], c: 0},
+        {q: "¿Qué robot ordeña vacas automáticamente?", a: ["Robot ordeñador", "Tractor", "Drone", "Sembradora"], c: 0},
+        {q: "¿Qué tecnología identifica plagas en cultivos?", a: ["Sensores", "Binoculares", "Trampas", "Insectos"], c: 0},
+        {q: "¿Qué sistema climático monitorea temperatura y lluvia?", a: ["Estación meteorológica", "Radar", "GPS", "Drone"], c: 0}
     ]
-}
-    // NIVEL 4: MINERÍA
-4: [
-    {q: "¿Qué mineral se extrae comúnmente para fabricar herramientas agrícolas?", a: ["Hierro", "Oro", "Plata", "Cobre"], c: 0},
-    {q: "¿Qué metal precioso se encuentra a veces en terrenos de granjas?", a: ["Oro", "Hierro", "Aluminio", "Bronce"], c: 0},
-    {q: "¿Qué roca se tritura para mejorar suelos ácidos?", a: ["Caliza", "Granito", "Mármol", "Pizarra"], c: 0},
-    {q: "¿Qué mineral es esencial para la fabricación de fertilizantes?", a: ["Fosfato", "Hierro", "Cobre", "Carbón"], c: 0},
-    {q: "¿Qué tipo de mina se excava en la superficie de la tierra?", a: ["Cielo abierto", "Subterránea", "Aluvial", "Marina"], c: 0},
-    {q: "¿Qué herramienta tradicional se usa en minería para romper rocas?", a: ["Pico", "Azada", "Pala", "Rastrillo"], c: 0},
-    {q: "¿Qué mineral se extrae para obtener sal?", a: ["Halita", "Calcita", "Cuarzo", "Yeso"], c: 0},
-    {q: "¿Qué máquina perforadora se usa en minería?", a: ["Taladro", "Tractor", "Cosechadora", "Empacadora"], c: 0},
-    {q: "¿Qué metal se usa para cableado eléctrico en granjas?", a: ["Cobre", "Hierro", "Acero", "Aluminio"], c: 0},
-    {q: "¿Qué material se extrae de canteras para construcción?", a: ["Piedra", "Petróleo", "Gas", "Carbón"], c: 0}
-]
-    // NIVEL 5: TECNOLOGÍA
-5: [
-    {q: "¿Qué máquina automatizada ara la tierra?", a: ["Tractor", "Cosechadora", "Sembradora", "Rastrillo"], c: 0},
-    {q: "¿Qué dispositivo usa GPS para guiar maquinaria?", a: ["Piloto automático", "Drone", "Sensor", "Riego"], c: 0},
-    {q: "¿Qué tecnología aérea monitorea cultivos?", a: ["Drones", "Satélites", "Aviones", "Globos"], c: 0},
-    {q: "¿Qué sistema automatizado administra el agua?", a: ["Riego inteligente", "Manguera", "Regadera", "Canal"], c: 0},
-    {q: "¿Qué sensor mide la humedad del suelo?", a: ["Higrómetro", "Termómetro", "Barómetro", "Anemómetro"], c: 0},
-    {q: "¿Qué software gestiona la producción agrícola?", a: ["ERP agrícola", "Excel", "Word", "Photoshop"], c: 0},
-    {q: "¿Qué energía renovable se instala en granjas?", a: ["Paneles solares", "Carbón", "Petróleo", "Gas"], c: 0},
-    {q: "¿Qué robot ordeña vacas automáticamente?", a: ["Robot ordeñador", "Tractor", "Drone", "Sembradora"], c: 0},
-    {q: "¿Qué tecnología identifica plagas en cultivos?", a: ["Sensores", "Binoculares", "Trampas", "Insectos"], c: 0},
-    {q: "¿Qué sistema climático monitorea temperatura y lluvia?", a: ["Estación meteorológica", "Radar", "GPS", "Drone"], c: 0}
-]
-
 };
 
+// ==================== BASE DE DATOS (60 PREGUNTAS) ====================
 // HERRAMIENTAS
 const TOOLS = {
     farm: [
