@@ -2,179 +2,716 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stardew Valley Trivia: Master Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #19232d;
-            --panel-bg: #212b36;
-            --accent-orange: #f39c12;
-            --accent-green: #27ae60;
-            --accent-blue: #2980b9;
-            --text-light: #ecf0f1;
-            --border: #34495e;
+            --bg-dark: #0d1b2a;
+            --panel-bg: #1b263b;
+            --accent-orange: #ff9e00;
+            --accent-green: #4ade80;
+            --accent-blue: #38bdf8;
+            --text-light: #f8fafc;
+            --border: #415a77;
+            --gold: #ffd700;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glow: 0 0 20px rgba(255, 158, 0, 0.3);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'VT323', monospace; user-select: none; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'VT323', monospace; 
+            user-select: none; 
+        }
 
         body {
-            background-color: #000;
-            height: 100vh; width: 100vw;
-            display: flex; justify-content: center; align-items: center;
-            overflow: hidden; color: var(--text-light);
+            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 100%);
+            min-height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            color: var(--text-light);
+            padding: 10px;
         }
 
-        /* === PANTALLA DE INICIO === */
+        /* === PANTALLA DE INICIO MEJORADA === */
         #start-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 999;
-            /* TU FONDO DE PAISAJE */
-            background: url('image_754052.jpg') no-repeat center center; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+            background: 
+                linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('image_754052.jpg') no-repeat center center;
             background-size: cover;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         
         .logo-box {
-            background: rgba(0,0,0,0.7); padding: 20px 40px; border-radius: 20px;
-            border: 6px solid var(--accent-orange); margin-bottom: 40px;
+            background: linear-gradient(145deg, rgba(255, 158, 0, 0.9), rgba(255, 215, 0, 0.9));
+            padding: 30px 60px;
+            border-radius: 25px;
+            border: 8px solid var(--gold);
+            margin-bottom: 50px;
             text-align: center;
+            box-shadow: var(--shadow), var(--glow);
+            animation: float 3s ease-in-out infinite;
         }
+        
         .game-title-main {
-            font-size: 6rem; color: #ffd700; text-shadow: 5px 5px 0 #8d5524; line-height: 1;
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: white;
+            text-shadow: 
+                3px 3px 0 #8d5524,
+                6px 6px 0 rgba(0, 0, 0, 0.5);
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+        
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
         }
         
         .menu-btn {
-            background: var(--accent-orange); border: 4px solid #d35400; color: #fff;
-            font-size: 2.5rem; padding: 15px 50px; margin: 15px; cursor: pointer;
-            box-shadow: 0 8px 0 #a04000; transition: transform 0.1s;
+            background: linear-gradient(to bottom, var(--accent-orange), #e67e00);
+            border: 5px solid var(--gold);
+            color: white;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            padding: 20px 30px;
+            cursor: pointer;
+            box-shadow: 
+                0 10px 0 #b35c00,
+                var(--glow);
+            transition: all 0.2s;
             animation: pulse 1.5s infinite alternate;
+            width: 100%;
+            border-radius: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-        .menu-btn:hover { filter: brightness(1.2); transform: scale(1.05); }
-        .menu-btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #a04000; }
-        .menu-btn:disabled { background: #555; border-color: #333; color: #888; animation: none; box-shadow: none; cursor: default; }
+        
+        .menu-btn:hover { 
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 15px 0 #b35c00,
+                0 0 30px rgba(255, 158, 0, 0.5);
+            filter: brightness(1.2);
+        }
+        
+        .menu-btn:active { 
+            transform: translateY(5px); 
+            box-shadow: 0 5px 0 #b35c00; 
+        }
+        
+        .menu-btn:disabled { 
+            background: #555; 
+            border-color: #333; 
+            color: #888; 
+            animation: none; 
+            box-shadow: none; 
+            cursor: default; 
+            transform: none !important;
+        }
 
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
 
-        /* === INTERFAZ PRINCIPAL (GRID) === */
-        .game-wrapper {
-            width: 98vw; height: 97vh;
+        @keyframes pulse { 
+            from { box-shadow: 0 10px 0 #b35c00, var(--glow); } 
+            to { box-shadow: 0 10px 0 #b35c00, 0 0 25px rgba(255, 158, 0, 0.6); } 
+        }
+
+        /* === CONTENEDOR PRINCIPAL DEL JUEGO === */
+        .game-container {
+            width: 100%;
+            max-width: 1800px;
+            min-height: 95vh;
+            display: flex;
+            flex-direction: column;
             background: var(--bg-dark);
-            border: 6px solid var(--border);
+            border: 8px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: none; /* Se activa con JS */
+        }
+
+        /* HEADER MEJORADO */
+        .header-area {
+            background: linear-gradient(to right, #1b263b, #0d1b2a);
+            padding: 15px 20px;
+            border-bottom: 4px solid var(--accent-orange);
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .main-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--accent-orange);
+            letter-spacing: 4px;
+            text-shadow: 
+                3px 3px 0 #000,
+                0 0 15px rgba(255, 158, 0, 0.5);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        /* TABS MEJORADAS */
+        .level-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
             border-radius: 10px;
-            display: none; /* JS activa esto */
-            grid-template-rows: auto auto 1fr;
-            gap: 10px; padding: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tab {
+            padding: 10px 25px;
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: #aaa;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-orange);
+            color: white;
+        }
+        
+        .tab.active {
+            background: linear-gradient(to bottom, var(--accent-orange), #e67e00);
+            color: white;
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 158, 0, 0.3);
+        }
+        
+        .tab.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ESTADÍSTICAS MEJORADAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0 15px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-orange);
+            box-shadow: 0 5px 15px rgba(255, 158, 0, 0.2);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .stat-val {
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hearts { color: #ef4444; }
+        .gold { color: var(--gold); }
+
+        /* CONTENIDO PRINCIPAL - RESPONSIVE */
+        .game-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            padding: 20px;
+            flex: 1;
+            overflow: auto;
+        }
+
+        @media (min-width: 1024px) {
+            .game-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* PANEL IZQUIERDO - TRIVIA */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .npc-area {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid var(--accent-orange);
+        }
+        
+        .npc-face {
+            width: 100px;
+            height: 100px;
+            background: #333;
+            border: 4px solid var(--gold);
+            border-radius: 50%;
+            object-fit: cover;
+            image-rendering: pixelated;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            flex-shrink: 0;
+        }
+        
+        .npc-bubble {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            color: #000;
+            padding: 20px;
+            border-radius: 15px;
+            flex-grow: 1;
             position: relative;
-        }
-
-        /* HEADER & TABS */
-        .header-area { text-align: center; display: flex; flex-direction: column; gap: 5px; }
-        .main-title { font-size: 3rem; color: var(--accent-orange); letter-spacing: 3px; text-shadow: 3px 3px 0 #000; margin: 0; }
-        
-        .level-tabs { display: flex; justify-content: center; gap: 5px; background: #111; padding: 5px; border-radius: 5px; }
-        .tab { 
-            padding: 5px 20px; font-size: 1.4rem; color: #777; background: #222; border: 2px solid #444; 
-            cursor: default; transition: 0.3s;
-        }
-        .tab.active { background: var(--accent-orange); color: #fff; border-color: #fff; transform: translateY(-2px); }
-        .tab.locked { opacity: 0.5; }
-
-        /* STATS BAR */
-        .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .stat-card { 
-            background: var(--panel-bg); border: 2px solid var(--border); padding: 5px; text-align: center; 
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .stat-label { font-size: 0.9rem; color: #aaa; letter-spacing: 1px; }
-        .stat-val { font-size: 1.8rem; font-weight: bold; }
-        .hearts { color: #e74c3c; } .gold { color: #f1c40f; }
-
-        /* CONTENIDO DIVIDIDO 50/50 */
-        .split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 100%; overflow: hidden; }
-
-        /* IZQUIERDA: TRIVIA */
-        .left-col { 
-            display: flex; flex-direction: column; gap: 10px; 
-            background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 2px solid var(--border);
+            font-size: 1.4rem;
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            min-height: 80px;
         }
         
-        .npc-area { display: flex; gap: 10px; height: 120px; align-items: center; }
-        .npc-face { 
-            width: 100px; height: 100px; background: #333; border: 3px solid #fff; 
-            border-radius: 50%; object-fit: cover; image-rendering: pixelated; 
-        }
-        .npc-bubble { 
-            background: #fff; color: #000; padding: 10px; border-radius: 10px; flex-grow: 1; 
-            position: relative; font-size: 1.3rem; border: 2px solid #000;
-            display: flex; align-items: center;
-        }
-        .npc-bubble::after { content:''; position: absolute; left:-10px; top:50%; border: 10px solid transparent; border-right-color: #000; transform: translateY(-50%); }
-
-        .shop-row { display: flex; gap: 5px; margin-bottom: 5px; }
-        .shop-btn { 
-            flex: 1; background: #2c3e50; border: 2px solid #7f8c8d; color: #fff; cursor: pointer; padding: 5px; 
-            display: flex; flex-direction: column; align-items: center; font-size: 1rem;
-        }
-        .shop-btn:hover { background: var(--accent-orange); border-color: #fff; }
-
-        .question-card { 
-            flex-grow: 1; background: var(--panel-bg); border: 3px solid var(--accent-green); 
-            padding: 15px; border-radius: 8px; display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .q-text { font-size: 1.6rem; color: #fff; margin-bottom: 15px; line-height: 1.2; }
-        .options { display: grid; gap: 8px; }
-        .opt { 
-            background: #34495e; border: 2px solid #2c3e50; padding: 12px; font-size: 1.3rem; color: #ddd; 
-            text-align: left; cursor: pointer; transition: 0.2s; 
-        }
-        .opt:hover { background: #3d566e; border-color: var(--accent-orange); transform: translateX(5px); }
-        .opt.selected { background: var(--accent-blue); border-color: #fff; color: #fff; }
-        .opt.correct { background: var(--accent-green) !important; border-color: #2ecc71 !important; }
-        .opt.incorrect { background: #c0392b !important; border-color: #e74c3c !important; }
-
-        /* DERECHA: MINIJUEGO + INVENTARIO */
-        .right-col { display: flex; flex-direction: column; gap: 10px; height: 100%; }
-
-        .minigame-box { 
-            flex-grow: 1; border: 4px solid var(--accent-orange); background: #000; position: relative; 
-            display: flex; flex-direction: column;
-        }
-        .minigame-header { 
-            background: var(--accent-orange); color: #000; padding: 2px 10px; font-weight: bold; 
-            display: flex; justify-content: space-between;
-        }
-        #canvas { width: 100%; height: 100%; image-rendering: pixelated; background: #222; }
-        .controls-hint { 
-            position: absolute; bottom: 5px; left: 5px; background: rgba(0,0,0,0.6); padding: 5px; font-size: 1rem; color: #fff; pointer-events: none; 
+        .npc-bubble::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            border: 10px solid transparent;
+            border-right-color: #000;
+            transform: translateY(-50%);
         }
 
-        .inventory-box { height: 140px; background: #111; border: 3px solid #555; padding: 5px; display: flex; flex-direction: column; }
-        .inv-title { text-align: center; color: #aaa; margin-bottom: 5px; font-size: 1rem; }
-        .inv-grid { 
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 5px; flex-grow: 1; 
+        .shop-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
         }
-        .slot { 
-            background: #2a2a2a; border: 2px solid #444; display: flex; align-items: center; justify-content: center; 
-            font-size: 2rem; cursor: pointer; position: relative; transition: 0.1s;
+        
+        .shop-btn {
+            background: linear-gradient(145deg, #334155, #1e293b);
+            border: 3px solid #64748b;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
-        .slot:hover { border-color: #fff; }
-        .slot.active { background: #3d3d3d; border-color: var(--accent-orange); box-shadow: 0 0 10px var(--accent-orange); }
-        .key-num { position: absolute; top: 2px; left: 4px; font-size: 0.8rem; color: #888; }
-        .slot-name { position: absolute; bottom: 2px; width: 100%; text-align: center; font-size: 0.7rem; color: #fff; text-shadow: 1px 1px #000; }
-
-        /* NOTIFICACIONES TOAST */
-        #toasts { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; width: 60%; display: flex; flex-direction: column; gap: 10px; }
-        .toast { 
-            background: #fff; border: 4px solid var(--accent-orange); color: #000; padding: 10px 20px; 
-            border-radius: 10px; display: flex; align-items: center; gap: 15px; font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            animation: slideIn 0.3s ease-out; 
+        
+        .shop-btn:hover {
+            background: linear-gradient(145deg, var(--accent-orange), #e67e00);
+            border-color: var(--gold);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 158, 0, 0.3);
         }
-        .toast img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid #000; object-fit: cover; }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .shop-btn span:first-child {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+        
+        .shop-btn small {
+            color: var(--gold);
+            font-size: 1rem;
+        }
 
-        /* BOTÓN MÚSICA */
-        .music-toggle { position: absolute; top: 20px; right: 20px; background: #fff; color: #000; border: 3px solid #000; padding: 10px; cursor: pointer; font-size: 1.5rem; border-radius: 50%; z-index: 1000; }
+        .question-card {
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.2));
+            border: 3px solid var(--accent-green);
+            padding: 25px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 400px;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.2);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        #season-tag {
+            background: var(--accent-green);
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .q-text {
+            font-size: 1.8rem;
+            color: white;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            flex: 1;
+        }
+        
+        .options {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .opt {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            padding: 18px;
+            font-size: 1.4rem;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .opt:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-orange);
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(255, 158, 0, 0.2);
+        }
+        
+        .opt.selected {
+            background: var(--accent-blue);
+            border-color: white;
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+        }
+        
+        .opt.correct {
+            background: var(--accent-green) !important;
+            border-color: #22c55e !important;
+            color: white !important;
+        }
+        
+        .opt.incorrect {
+            background: #dc2626 !important;
+            border-color: #ef4444 !important;
+            color: white !important;
+        }
 
+        /* PANEL DERECHO - MINIJUEGO */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .minigame-container {
+            flex: 1;
+            border: 4px solid var(--accent-orange);
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--glow);
+            min-height: 400px;
+        }
+        
+        .minigame-header {
+            background: linear-gradient(to right, var(--accent-orange), #e67e00);
+            color: #000;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #canvas {
+            width: 100%;
+            height: calc(100% - 45px);
+            image-rendering: pixelated;
+            background: #1e293b;
+        }
+        
+        .controls-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            font-size: 1.1rem;
+            color: white;
+            border-radius: 8px;
+            border: 2px solid var(--accent-orange);
+        }
+
+        .inventory-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 3px solid #555;
+            border-radius: 15px;
+            padding: 15px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+        }
+        
+        .inv-title {
+            text-align: center;
+            color: var(--accent-orange);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .inv-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .slot {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border: 3px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            border-radius: 10px;
+        }
+        
+        .slot:hover {
+            border-color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+        
+        .slot.active {
+            background: linear-gradient(145deg, var(--accent-orange), #e67e00);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px var(--accent-orange);
+            transform: scale(1.05);
+        }
+        
+        .key-num {
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            font-size: 0.9rem;
+            color: #ccc;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .slot-name {
+            position: absolute;
+            bottom: 5px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: white;
+            text-shadow: 1px 1px #000;
+        }
+
+        /* NOTIFICACIONES TOAST MEJORADAS */
+        #toasts {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border: 4px solid var(--accent-orange);
+            color: #000;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 1.4rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            backdrop-filter: blur(10px);
+        }
+        
+        .toast img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid #000;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* BOTÓN DE MÚSICA */
+        .music-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-orange);
+            color: #000;
+            border: 3px solid var(--gold);
+            padding: 12px;
+            cursor: pointer;
+            font-size: 1.8rem;
+            border-radius: 50%;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s;
+        }
+        
+        .music-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--accent-orange);
+        }
+
+        /* BOTÓN CONFIRMAR MEJORADO */
+        .confirm-btn {
+            background: linear-gradient(to bottom, var(--accent-green), #22c55e);
+            border: 4px solid #22c55e;
+            color: white;
+            font-size: 1.8rem;
+            padding: 15px;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #15803d;
+            transition: all 0.2s;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            width: 100%;
+        }
+        
+        .confirm-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 11px 0 #15803d;
+        }
+        
+        .confirm-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 4px 0 #15803d;
+        }
+        
+        .confirm-btn:disabled {
+            background: #555;
+            border-color: #333;
+            color: #888;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 10px;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #e67e00;
+        }
     </style>
 </head>
 <body>
@@ -185,13 +722,15 @@
         <div class="logo-box">
             <h1 class="game-title-main">STARDEW VALLEY<br>TRIVIA</h1>
         </div>
-        <button class="menu-btn" onclick="startGame(true)">NUEVA PARTIDA</button>
-        <button class="menu-btn" id="btn-continue" onclick="startGame(false)" disabled>CONTINUAR</button>
+        <div class="menu-container">
+            <button class="menu-btn" onclick="startGame(true)">NUEVA PARTIDA</button>
+            <button class="menu-btn" id="btn-continue" onclick="startGame(false)" disabled>CONTINUAR</button>
+        </div>
     </div>
 
     <div id="toasts"></div>
 
-    <div class="game-wrapper" id="game-ui">
+    <div class="game-container" id="game-ui">
         <div class="header-area">
             <h2 class="main-title">STARDEW VALLEY TRIVIA</h2>
             <div class="level-tabs">
@@ -211,43 +750,56 @@
             <div class="stat-card"><span class="stat-label">SALUD</span><span class="stat-val hearts" id="ui-hearts">❤️❤️❤️❤️❤️</span></div>
         </div>
 
-        <div class="split-view">
-            <div class="left-col">
+        <div class="game-content">
+            <div class="left-panel">
                 <div class="npc-area">
                     <img src="" id="npc-img" class="npc-face">
-                    <div class="npc-bubble" id="npc-text">...</div>
+                    <div class="npc-bubble" id="npc-text">¡Bienvenido a la granja! Responde preguntas correctamente para ganar oro y avanzar. ¡Buena suerte!</div>
                 </div>
                 
                 <div class="shop-row">
-                    <button class="shop-btn" onclick="buy('heart')"><span>❤️ Vida</span><small>200g</small></button>
-                    <button class="shop-btn" onclick="buy('time')"><span>⏳ Tiempo</span><small>100g</small></button>
-                    <button class="shop-btn" onclick="buy('hint')"><span>💡 Pista</span><small>50g</small></button>
+                    <button class="shop-btn" onclick="buy('heart')">
+                        <span>❤️ Vida</span>
+                        <small>200g</small>
+                    </button>
+                    <button class="shop-btn" onclick="buy('time')">
+                        <span>⏳ Tiempo</span>
+                        <small>100g</small>
+                    </button>
+                    <button class="shop-btn" onclick="buy('hint')">
+                        <span>💡 Pista</span>
+                        <small>50g</small>
+                    </button>
                 </div>
 
                 <div class="question-card">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:#aaa;">
+                    <div class="question-header">
                         <span id="season-tag">Primavera</span>
                         <span class="gold">🪙 <span id="ui-gold">0</span>g</span>
                     </div>
-                    <div class="q-text" id="q-text">...</div>
-                    <div class="options" id="q-options"></div>
-                    <button class="menu-btn" style="font-size:1.5rem; padding:10px; margin:10px 0 0 0; background:var(--accent-green); border-color:#1e8449;" id="btn-confirm" onclick="checkAnswer()">CONFIRMAR</button>
+                    <div class="q-text" id="q-text">Selecciona "NUEVA PARTIDA" para comenzar tu aventura en Stardew Valley Trivia. ¡Cada pregunta correcta te dará oro y puntos!</div>
+                    <div class="options" id="q-options">
+                        <!-- Las opciones se generan dinámicamente -->
+                    </div>
+                    <button class="confirm-btn" id="btn-confirm" onclick="checkAnswer()" disabled>CONFIRMAR RESPUESTA</button>
                 </div>
             </div>
 
-            <div class="right-col">
-                <div class="minigame-box">
+            <div class="right-panel">
+                <div class="minigame-container">
                     <div class="minigame-header">
                         <span>MINIJUEGO</span>
                         <span id="net-counter" style="display:none">Red: 0/10 🐟</span>
                     </div>
-                    <canvas id="canvas" width="600" height="400"></canvas>
+                    <canvas id="canvas" width="800" height="450"></canvas>
                     <div class="controls-hint" id="controls-hint">WASD: Mover | ESPACIO: Acción</div>
                 </div>
 
-                <div class="inventory-box">
+                <div class="inventory-container">
                     <div class="inv-title">MOCHILA (Teclas 1-6)</div>
-                    <div class="inv-grid" id="inventory"></div>
+                    <div class="inv-grid" id="inventory">
+                        <!-- Inventario se genera dinámicamente -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -273,7 +825,7 @@ const DB = {
             {q: "¿Qué herramienta voltea la tierra?", a:["Azada","Pico","Hacha","Guadaña"], c:0},
             {q: "¿Qué flor sigue al sol?", a:["Girasol","Rosa","Tulipán","Orquídea"], c:0},
             {q: "¿Qué necesitan las semillas para nacer?", a:["Agua y Calor","Oscuridad","Frío","Viento"], c:0},
-            {q: "¿Qué legumbre fija nitrógeno?", a:["Frijol","Maíz","Tomate","Lechuga"], c:0}
+            {q: "¿Qué parte de las plantas empieza a brotar y a llenar el paisaje de colores vivos durante la primavera?", a:["Frijol","Las raices","Las flores","Las espinas"], c:2}
         ],
         "Verano": [
             {q: "¿Qué baya azul crece en arbustos en verano?", a:["Arándano","Fresa","Mora","Cereza"], c:0},
@@ -290,28 +842,26 @@ const DB = {
             {q: "¿Qué herramienta junta hojas secas?", a:["Rastrillo","Pala","Pico","Azada"], c:0}
         ],
         "Invierno": [
-            {q: "¿Qué estructura protege del frío?", a:["Invernadero","Silo","Establo","Pozo"], c:0},
+            {q: "¿Qué estructura de una granja protege del frío?", a:["Invernadero","Silo","Establo","Pozo"], c:0},
             {q: "¿Qué hacen los árboles en invierno?", a:["Dormancia","Crecer","Florecer","Morir"], c:0},
             {q: "¿Qué raíz resiste el frío?", a:["Zanahoria","Tomate","Sandía","Pimiento"], c:0},
             {q: "¿Qué cristaliza el agua en las plantas?", a:["Helada","Rocío","Niebla","Lluvia"], c:0},
             {q: "¿Qué actividad agrícola se hace en invierno?", a:["Poda","Siembra","Cosecha","Riego"], c:0}
         ]
     },
-    // NIVEL 2: PESCA (20 Preguntas)
+    // NIVEL 2: PESCA (10 Preguntas)
     1: [
-        {q:"¿Agua de mar?", a:["Salada","Dulce","Destilada","Gas"], c:0},
+        {q:"¿El agua del mar es?", a:["Salada","Dulce","Destilada","Mineral"], c:0},
         {q:"¿Pez que remonta ríos?", a:["Salmón","Atún","Sardina","Carpa"], c:0},
-        {q:"¿Órgano para respirar bajo agua?", a:["Branquias","Pulmones","Nariz","Piel"], c:0},
-        {q:"¿Cría de peces controlada?", a:["Acuicultura","Pesca","Caza","Ganadería"], c:0},
-        {q:"¿Pez plano del fondo?", a:["Lenguado","Trucha","Dorado","Pez Espada"], c:0},
-        {q:"¿Cebo artificial?", a:["Señuelo","Gusano","Pan","Maíz"], c:0},
-        {q:"¿Pez gigante de río?", a:["Esturión","Sardina","Anchoa","Payaso"], c:0},
+        {q:"¿Órgano de los peces para respirar bajo agua?", a:["Branquias","Pulmones","Nariz","Piel"], c:0},
+        {q:"¿Como se le conoce a la cría de peces controlada?", a:["Acuicultura","Pesca","Caza","Ganadería"], c:0},
+        {q:"¿Pez plano del fondo marino?", a:["Lenguado","Trucha","Dorado","Pez Espada"], c:0},
+        {q:"¿Cual es un cebo artificial?", a:["Señuelo","Gusano","Pan","Maíz"], c:0},
+        {q:"¿Cual es el pez gigante del río?", a:["Esturión","Sardina","Anchoa","Payaso"], c:0},
         {q:"¿Qué atrae a los peces?", a:["Movimiento/Olor","Ruido","Luz fuerte","Gritos"], c:0},
         {q:"¿Pez famoso por ser venenoso?", a:["Pez Globo","Salmón","Tilapia","Merluza"], c:0},
-        {q:"¿Crustáceo con pinzas?", a:["Cangrejo","Pulpo","Medusa","Estrella"], c:0},
-        // Relleno hasta 20...
-    ].concat(Array(10).fill({q:"¿Pregunta de Pesca Extra?", a:["Opción A","Opción B","Opción C","Opción D"], c:0})),
-    
+        {q:"¿Cual es el crustáceo con pinzas?", a:["Cangrejo","Pulpo","Medusa","Estrella"], c:0}
+    ],
     // NIVEL 3: GANADERÍA
     2: Array(20).fill({q:"¿Qué come la vaca?", a:["Pasto","Carne","Piedras","Plástico"], c:0}),
     // NIVEL 4: MINERÍA
@@ -323,19 +873,19 @@ const DB = {
 // HERRAMIENTAS
 const TOOLS = {
     farm: [
-        {n:"Azada",i:"⛏️"}, {n:"Regadera",i:"💧"}, {n:"Fresa",i:"🍓"}, 
+        {n:"Azada",i:"🔱"}, {n:"Regadera",i:"🚿"}, {n:"Fresa",i:"🍓"}, 
         {n:"Arándano",i:"🫐"}, {n:"Calabaza",i:"🎃"}, {n:"Cosechar",i:"✂️"}
     ],
     fish: [{n:"Caña",i:"🎣"}],
     ranch: [{n:"Heno",i:"🌾"}, {n:"Acariciar",i:"🖐️"}],
-    mine: [{n:"Pico",i:"🔨"}],
+    mine: [{n:"Pico",i:"⛏️"}],
     tech: [{n:"Fertilizante",i:"🧪"}, {n:"Riego",i:"🚿"}]
 };
 
 // ==================== ESTADO Y LOGICA ====================
 const STATE = {
     level: 0, seasonIdx: 0, qIndex: 0, qTotal: 0,
-    hearts: 5, gold: 0, score: 0, time: 60,
+    hearts: 5, gold: 0, score: 0, time: 30,
     inventory: [], toolIdx: 0, selOpt: -1,
     loop: null,
     // Minijuego
@@ -353,6 +903,9 @@ function toggleAudio() {
     musicOn = !musicOn;
     musicOn ? audio.play() : audio.pause();
     document.getElementById('audio-btn').innerText = musicOn ? "🔊" : "🔇";
+    document.getElementById('audio-btn').style.background = musicOn ? 
+        "linear-gradient(145deg, #4ade80, #22c55e)" : 
+        "linear-gradient(145deg, #f87171, #dc2626)";
 }
 
 // INICIO
@@ -360,39 +913,78 @@ const save = localStorage.getItem('sv_master_save');
 if(save) document.getElementById('btn-continue').disabled = false;
 
 function startGame(isNew) {
+    console.log("startGame called, isNew:", isNew);
     document.getElementById('start-screen').style.display = 'none';
-    document.querySelector('.game-wrapper').style.display = 'grid';
+    document.getElementById('game-ui').style.display = 'flex';
+    
+    // Ajustar tamaño del canvas
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
     if(isNew || !save) {
         STATE.level=0; STATE.gold=50; STATE.hearts=5; STATE.seasonIdx=0; STATE.qIndex=0;
-        toast("¡Bienvenido a la granja!", IMG.haley);
+        STATE.time = 30;
+        toast("¡Bienvenido a la granja! Tienes 30 segundos por pregunta.", IMG.haley, "success");
     } else {
         Object.assign(STATE, JSON.parse(save));
-        toast("¡Regresaste!", IMG.haley);
+        STATE.time = 30;
+        toast("¡Regresaste! El tiempo se reinició a 30 segundos.", IMG.haley, "success");
     }
-    toggleAudio(); // Iniciar musica tras click
+    
+    // INICIALIZAR CRONÓMETRO CIRCULAR 
+    updateTimerDisplay();
+    startTimer();
+    
+    toggleAudio();
     initLevel();
     gameLoop();
 }
 
+function resizeCanvas() {
+    const canvas = document.getElementById('canvas');
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight - 45;
+}
+
 function initLevel() {
     // Config UI Nivel
-    document.querySelectorAll('.tab').forEach((t,i) => t.className = `tab ${i===STATE.level?'active':''}`);
+    document.querySelectorAll('.tab').forEach((t,i) => {
+        t.className = `tab ${i===STATE.level?'active':''} ${i>STATE.level?'locked':''}`;
+        t.onclick = i<=STATE.level ? (() => { 
+            STATE.level=i; STATE.qIndex=0; STATE.seasonIdx=0; 
+            initLevel(); 
+        }) : null;
+    });
+    
     document.getElementById('ui-level').innerText = STATE.level + 1;
     
     // Config Minijuego
     if(STATE.level === 0) { // Granja
-        if(STATE.farm.length === 0) { // Iniciar grid si está vacio
+        if(STATE.farm.length === 0) {
+            const canvas = document.getElementById('canvas');
             for(let r=0; r<6; r++) for(let c=0; c<8; c++) 
-                STATE.farm.push({x:c*50+50, y:r*50+50, t:'grass', w:false, c:-1, age:0});
+                STATE.farm.push({
+                    x: c*(canvas.width/8) + 30, 
+                    y: r*(canvas.height/6) + 30, 
+                    t:'grass', 
+                    w:false, 
+                    c:-1, 
+                    age:0
+                });
         }
     } else if (STATE.level === 1) { // Pesca
         document.getElementById('net-counter').style.display = 'block';
+        document.getElementById('controls-hint').innerText = "ESPACIO: Tirar la red | Mover: Arriba/Abajo";
     } else if (STATE.level === 2 || STATE.level === 3) { // Ganaderia/Mineria
         STATE.entities = [];
+        const canvas = document.getElementById('canvas');
         for(let i=0; i<6; i++) STATE.entities.push({
-            x:Math.random()*500, y:Math.random()*500, 
+            x: Math.random()*(canvas.width-50), 
+            y: Math.random()*(canvas.height-80), 
             type: STATE.level===2 ? (Math.random()>.5?'cow':'pig') : 'rock', 
-            hp:3, fed:false
+            hp:3, 
+            fed:false
         });
     }
 
@@ -409,17 +1001,24 @@ function renderInventory() {
         const d = document.createElement('div');
         d.className = `slot ${i===STATE.toolIdx?'active':''}`;
         d.innerHTML = `<span class="key-num">${i+1}</span>${t.i}<span class="slot-name">${t.n}</span>`;
-        d.onclick = () => { STATE.toolIdx=i; renderInventory(); };
+        d.onclick = () => { 
+            STATE.toolIdx=i; 
+            renderInventory(); 
+            toast(`Herramienta seleccionada: ${t.n}`, IMG.haley);
+        };
         grid.appendChild(d);
     });
 }
 
 // PREGUNTAS
 function loadQuestion() {
+    // RESETEAR EL CRONÓMETRO A 30 SEGUNDOS
+    resetTimer();
+
     // Mecánica Riego (Nivel 1)
     if(STATE.level === 0 && STATE.qTotal > 0 && STATE.qTotal % 4 === 0) {
-        STATE.farm.forEach(t => t.w = false); // Secar
-        toast("¡La tierra se secó! Riega.", IMG.haley);
+        STATE.farm.forEach(t => t.w = false);
+        toast("¡La tierra se secó! Riega con la regadera (Tecla 2).", IMG.haley);
     }
 
     let qData;
@@ -442,7 +1041,7 @@ function loadQuestion() {
     STATE.selOpt = -1;
     document.getElementById('btn-confirm').disabled = true;
 
-    // Shuffle options
+    // Mezclar opciones
     let opts = qData.a.map((txt, i) => ({txt, i}));
     opts.sort(()=>Math.random()-0.5);
 
@@ -455,14 +1054,25 @@ function loadQuestion() {
             btn.classList.add('selected');
             STATE.selOpt = o.i;
             document.getElementById('btn-confirm').disabled = false;
+            document.getElementById('btn-confirm').style.background = "linear-gradient(to bottom, #3b82f6, #1d4ed8)";
+            document.getElementById('btn-confirm').style.borderColor = "#60a5fa";
         };
         div.appendChild(btn);
     });
     
-    setNPC("¡Tú puedes!");
+    setNPC("¡Tú puedes! Elige la respuesta correcta.");
 }
 
 function checkAnswer() {
+    // PAUSAR EL CRONÓMETRO MIENTRAS SE REVISA LA RESPUESTA
+    if(timerInterval) clearInterval(timerInterval);
+
+    if(STATE.selOpt === -1) {
+        toast("Selecciona una respuesta primero!", IMG.haley);
+        startTimer();
+        return;
+    }
+
     let correct;
     if(STATE.level===0) {
         const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
@@ -471,31 +1081,76 @@ function checkAnswer() {
         correct = DB[STATE.level][STATE.qIndex].c;
     }
 
-    if(STATE.selOpt === correct) {
-        STATE.score += 100; STATE.gold += 50; STATE.qTotal++;
-        toast("¡Correcto! +50g", IMG.haley_h);
-        // Bonus granja
-        if(STATE.level===0) STATE.farm.forEach(t=>{if(t.c>-1 && t.w) t.age++});
-    } else {
-        STATE.hearts--;
-        toast("Incorrecto...", IMG.haley);
-    }
-    
-    updateUI();
-    STATE.qIndex++;
-    saveProgress();
-    
-    if(STATE.hearts<=0) { alert("GAME OVER"); location.reload(); }
-    else loadQuestion();
+    const options = document.querySelectorAll('.opt');
+    options.forEach((opt, i) => {
+        if(i === correct) opt.classList.add('correct');
+        if(i === STATE.selOpt && i !== correct) opt.classList.add('incorrect');
+    });
+
+    setTimeout(() => {
+        if(STATE.selOpt === correct) {
+            STATE.score += 100; 
+            STATE.gold += 50; 
+            STATE.qTotal++;
+            toast("¡Correcto! +50g 🪙", IMG.haley_h);
+            if(STATE.level===0) STATE.farm.forEach(t=>{if(t.c>-1 && t.w) t.age++});
+        } else {
+            STATE.hearts--;
+            toast("Incorrecto... -1 Vida ❤️", IMG.haley);
+        }
+        
+        updateUI();
+        STATE.qIndex++;
+        saveProgress();
+        
+        // Después de mostrar el resultado, reanudar el timer
+        setTimeout(() => {
+            startTimer();
+            if(STATE.hearts<=0) { 
+                gameOver(); 
+            } else {
+                setTimeout(loadQuestion, 1000);
+            }
+        }, 1500);
+    }, 1500);
+}
+
+function gameOver() {
+    alert("¡GAME OVER!\nPuntuación: " + STATE.score + "\nOro: " + STATE.gold + "g");
+    localStorage.removeItem('sv_master_save');
+    location.reload();
 }
 
 function nextLevel() {
     if(STATE.level < 4) {
-        STATE.level++; STATE.qIndex=0; STATE.seasonIdx=0;
-        alert("¡NIVEL COMPLETADO!");
-        initLevel();
+        STATE.level++; 
+        STATE.qIndex=0; 
+        STATE.seasonIdx=0;
+        STATE.gold += 500; // Bonus por completar nivel
+
+        // PAUSAR CRONÓMETRO DURANTE TRANSICIÓN
+        if(timerInterval) clearInterval(timerInterval);
+        
+        toast(`¡NIVEL ${STATE.level} COMPLETADO! +500g 🪙`, IMG.abigail_h, "success");
+        updateUI();
+        
+        setTimeout(() => {
+            alert("¡NIVEL COMPLETADO!\nDesbloqueaste: " + 
+                  ["Agricultura", "Pesca", "Ganadería", "Minería", "Tecnología"][STATE.level-1]);
+            
+            // REINICIAR CRONÓMETRO PARA NUEVO NIVEL
+            resetTimer();
+            startTimer();
+            
+            initLevel();
+        }, 2000);
     } else {
-        alert("¡JUEGO COMPLETADO! ERES UN MAESTRO.");
+        // PAUSAR CRONÓMETRO AL TERMINAR EL JUEGO
+        if(timerInterval) clearInterval(timerInterval);
+        
+        alert("¡JUEGO COMPLETADO! 🎉\nERES UN MAESTRO DE STARDEW VALLEY!\nPuntuación Final: " + STATE.score);
+        localStorage.removeItem('sv_master_save');
+        location.reload();
     }
 }
 
@@ -513,122 +1168,436 @@ function gameLoop() {
 const keys = {};
 window.addEventListener('keydown', e => {
     keys[e.key.toLowerCase()] = true;
-    if(e.key >= '1' && e.key <= '6') { STATE.toolIdx = parseInt(e.key)-1; renderInventory(); }
-    if(e.key === ' ') e.preventDefault();
+    if(e.key >= '1' && e.key <= '6') { 
+        STATE.toolIdx = parseInt(e.key)-1; 
+        renderInventory(); 
+    }
+    if(e.key === ' ') {
+        e.preventDefault();
+        handleAction();
+    }
 });
+
 window.addEventListener('keyup', e => {
     keys[e.key.toLowerCase()] = false;
-    if(e.key === ' ') handleAction(); // Acción al soltar o presionar (mejor soltar para no spam)
 });
 
 function updateGame() {
     // Mover jugador (WASD)
-    if(STATE.level !== 1) { // En pesca no se mueve
-        if(keys['w']) STATE.player.y -= 3;
-        if(keys['s']) STATE.player.y += 3;
-        if(keys['a']) STATE.player.x -= 3;
-        if(keys['d']) STATE.player.x += 3;
+    if(STATE.level !== 1) {
+        const speed = STATE.level === 0 ? 4 : 3;
+        if(keys['w'] || keys['arrowup']) STATE.player.y -= speed;
+        if(keys['s'] || keys['arrowdown']) STATE.player.y += speed;
+        if(keys['a'] || keys['arrowleft']) STATE.player.x -= speed;
+        if(keys['d'] || keys['arrowright']) STATE.player.x += speed;
+        
+        // Limites del canvas
+        const canvas = document.getElementById('canvas');
+        STATE.player.x = Math.max(0, Math.min(canvas.width - STATE.player.w, STATE.player.x));
+        STATE.player.y = Math.max(0, Math.min(canvas.height - STATE.player.h, STATE.player.y));
+        
+        // Sistema de crecimiento automático para cultivos regados
+        if(STATE.level === 0) {
+            STATE.farm.forEach(tile => {
+                if(tile.c !== -1 && tile.w && tile.age < 4) {
+                    // Crecimiento más lento (cada 5 segundos aproximadamente)
+                    if(Math.random() < 0.001) {
+                        tile.age = Math.min(4, tile.age + 1);
+                        if(tile.age === 4) {
+                            showActionFeedback("✨", tile.x, tile.y);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // Pesca Física
     if(STATE.level === 1) {
-        if(keys[' ']) STATE.fish.bV -= 0.5;
-        STATE.fish.bV += 0.2; // Gravedad
-        STATE.fish.bY += STATE.fish.bV;
-        // Limites
-        if(STATE.fish.bY < 0) STATE.fish.bY=0; 
-        if(STATE.fish.bY > 300) STATE.fish.bY=300;
+        if(keys['w'] || keys['arrowup']) STATE.fish.bY -= 4;
+        if(keys['s'] || keys['arrowdown']) STATE.fish.bY += 4;
+        
+        // Limites barra de pesca
+        STATE.fish.bY = Math.max(0, Math.min(300, STATE.fish.bY));
         
         // Pez IA
-        if(Math.random()<0.05) STATE.fish.t = Math.random()*300;
-        STATE.fish.y += (STATE.fish.t - STATE.fish.y)*0.05;
+        if(Math.random()<0.03) STATE.fish.t = Math.random()*300;
+        STATE.fish.y += (STATE.fish.t - STATE.fish.y)*0.03;
 
         // Captura
-        if(STATE.fish.y > STATE.fish.bY && STATE.fish.y < STATE.fish.bY+80) STATE.fish.p += 0.5;
-        else STATE.fish.p -= 0.3;
+        if(Math.abs(STATE.fish.y - STATE.fish.bY) < 40) {
+            STATE.fish.p += 0.8;
+            document.getElementById('net-counter').style.color = "#4ade80";
+        } else {
+            STATE.fish.p -= 0.2;
+            document.getElementById('net-counter').style.color = "#f87171";
+        }
         
-        if(STATE.fish.p < 0) STATE.fish.p = 0;
-        if(STATE.fish.p > 100) {
-            STATE.fish.p = 20; STATE.fish.catch++; STATE.gold+=20;
+        STATE.fish.p = Math.max(0, Math.min(100, STATE.fish.p));
+        
+        if(STATE.fish.p >= 100) {
+            STATE.fish.p = 20; 
+            STATE.fish.catch++; 
+            STATE.gold+=20;
+            STATE.score+=50;
             document.getElementById('net-counter').innerText = `Red: ${STATE.fish.catch}/10 🐟`;
-            toast("¡Pescado! +20g", IMG.abigail_h);
+            showActionFeedback("🐟+20g", 300, 200);
             updateUI();
+            
+            if(STATE.fish.catch >= 10) {
+                STATE.qIndex += 5;
+                showActionFeedback("🎯+5 preguntas", 300, 150);
+                STATE.fish.catch = 0;
+                loadQuestion();
+            }
         }
     }
 }
 
 function handleAction() {
     const p = STATE.player;
+    const canvas = document.getElementById('canvas');
+    
     if(STATE.level === 0) { // Granja
-        let t = STATE.farm.find(tile => Math.hypot(tile.x-p.x, tile.y-p.y) < 40);
+        let t = STATE.farm.find(tile => 
+            Math.abs(tile.x - (p.x+15)) < 25 && Math.abs(tile.y - (p.y+15)) < 25
+        );
+        
         if(t) {
-            // 0:Azada, 1:Regadera, 2:Fresa, 3:Arandano, 4:Calabaza, 5:Cosechar
-            if(STATE.toolIdx===0 && t.t==='grass') t.t='dirt';
-            if(STATE.toolIdx===1 && t.t==='dirt') t.w=true;
-            if(STATE.toolIdx>=2 && STATE.toolIdx<=4 && t.t==='dirt' && t.c===-1) {
-                t.c = STATE.toolIdx; t.age=1; // Plantar
+            const tools = ["Azada", "Regadera", "Fresa", "Arándano", "Calabaza", "Cosechar"];
+            const tool = tools[STATE.toolIdx];
+            
+            // 0: Azada - Arar tierra (grass -> dirt)
+            if(STATE.toolIdx === 0 && t.t === 'grass') {
+                t.t = 'dirt';
+                showActionFeedback("🔱", t.x, t.y);
+                updateActionCounter('plow');
+                return;
             }
-            if(STATE.toolIdx===5 && t.age>=4) {
-                t.c=-1; t.t='dirt'; t.w=false; STATE.gold+=30; toast("Cosechado +30g", IMG.haley_h); updateUI();
+            
+            // 1: Regadera - Regar tierra arada
+            if(STATE.toolIdx === 1 && t.t === 'dirt') {
+                t.w = true;
+                showActionFeedback("🚿", t.x, t.y);
+                updateActionCounter('water');
+                
+                // Si hay cultivo, acelerar crecimiento
+                if(t.c !== -1) {
+                    t.age = Math.min(4, t.age + 1);
+                    if(t.age >= 4) {
+                        showActionFeedback("🌱✓", t.x, t.y);
+                    }
+                }
+                return;
             }
-        }
-    }
-    if(STATE.level === 2 || STATE.level === 3) { // Ganaderia/Mineria
-        let e = STATE.entities.find(en => Math.hypot(en.x-p.x, en.y-p.y) < 50);
-        if(e) {
-            if(STATE.level===2 && STATE.toolIdx===0 && !e.fed) { e.fed=true; STATE.gold+=10; toast("Alimentado", IMG.haley); }
-            if(STATE.level===3 && STATE.toolIdx===0) { 
-                e.hp--; 
-                if(e.hp<=0) { 
-                    STATE.entities = STATE.entities.filter(x=>x!==e); 
-                    STATE.gold+=50; toast("Mineral +50g", IMG.abigail); 
+            
+            // 2-4: Plantar semillas (Fresa=2, Arándano=3, Calabaza=4)
+            if(STATE.toolIdx >= 2 && STATE.toolIdx <= 4) {
+                if(t.t === 'dirt' && t.c === -1) {
+                    t.c = STATE.toolIdx;
+                    t.age = 1;
+                    const plantIcons = ["🍓", "🫐", "🎃"];
+                    showActionFeedback(plantIcons[STATE.toolIdx-2], t.x, t.y);
+                    updateActionCounter('plant');
+                    return;
                 }
             }
-            updateUI();
+            
+            // 5: Cosechar - Solo si el cultivo está maduro (age >= 4)
+            if(STATE.toolIdx === 5) {
+                if(t.c !== -1 && t.age >= 4) {
+                    const rewards = [30, 40, 50]; // Fresa, Arándano, Calabaza
+                    const reward = rewards[t.c-2] || 30;
+                    
+                    STATE.gold += reward;
+                    STATE.score += 20;
+                    
+                    // Mostrar recompensa
+                    showActionFeedback(`+${reward}g`, t.x, t.y);
+                    updateActionCounter('harvest');
+                    
+                    // Resetear tile
+                    t.c = -1;
+                    t.t = 'dirt';
+                    t.w = false;
+                    t.age = 0;
+                    
+                    updateUI();
+                    return;
+                }
+            }
+            
+            // Si ninguna acción fue válida
+            showActionFeedback("❌", t.x, t.y);
+        }
+    }
+    else if(STATE.level === 2 || STATE.level === 3) {
+        // Mantener el código original para otros niveles
+        let e = STATE.entities.find(en => 
+            Math.abs(en.x - p.x) < 50 && Math.abs(en.y - p.y) < 50
+        );
+        
+        if(e) {
+            if(STATE.level===2 && STATE.toolIdx===0 && !e.fed) { 
+                e.fed=true; 
+                STATE.gold+=10; 
+                STATE.score+=10;
+                showActionFeedback("+10g", e.x+20, e.y+20);
+                updateUI();
+            }
+            if(STATE.level===3 && STATE.toolIdx===0) { 
+                e.hp--; 
+                showActionFeedback("🔨", e.x+20, e.y+20);
+                if(e.hp<=0) { 
+                    STATE.entities = STATE.entities.filter(x=>x!==e); 
+                    STATE.gold+=50; 
+                    STATE.score+=30;
+                    showActionFeedback("+50g", e.x+20, e.y+20);
+                    updateUI();
+                }
+            }
         }
     }
 }
 
+// Función para mostrar feedback de acciones
+function showActionFeedback(icon, x, y) {
+    const canvas = document.getElementById('canvas');
+    const feedback = document.createElement('div');
+    feedback.innerHTML = icon;
+    
+    // Calcular posición relativa al viewport
+    const canvasRect = canvas.getBoundingClientRect();
+    const posX = canvasRect.left + x;
+    const posY = canvasRect.top + y;
+    
+    feedback.style.cssText = `
+        position: fixed;
+        left: ${posX}px;
+        top: ${posY}px;
+        font-size: 24px;
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        animation: floatUp 1s ease-out forwards;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    
+    document.body.appendChild(feedback);
+    
+    // Crear animación CSS si no existe
+    if (!document.getElementById('floatUpAnimation')) {
+        const style = document.createElement('style');
+        style.id = 'floatUpAnimation';
+        style.textContent = `
+            @keyframes floatUp {
+                0% { transform: translateY(0) scale(1); opacity: 1; }
+                100% { transform: translateY(-50px) scale(0.5); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // Remover después de la animación
+    setTimeout(() => {
+        feedback.remove();
+    }, 1000);
+}
+
 function drawGame() {
-    ctx.clearRect(0,0,600,400);
+    const canvas = document.getElementById('canvas');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
     
     if(STATE.level === 0) { // Granja Draw
+        // Fondo
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        // Cuadrícula
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.lineWidth = 1;
+        for(let x=0; x<=canvas.width; x+=canvas.width/8) {
+            ctx.beginPath();
+            ctx.moveTo(x,0);
+            ctx.lineTo(x,canvas.height);
+            ctx.stroke();
+        }
+        for(let y=0; y<=canvas.height; y+=canvas.height/6) {
+            ctx.beginPath();
+            ctx.moveTo(0,y);
+            ctx.lineTo(canvas.width,y);
+            ctx.stroke();
+        }
+        
+        // Tiles
         STATE.farm.forEach(t => {
-            ctx.fillStyle = t.t==='grass' ? '#56bc4b' : '#8d6e63';
-            ctx.fillRect(t.x, t.y, 40, 40);
-            if(t.w) { ctx.fillStyle='rgba(0,0,255,0.3)'; ctx.fillRect(t.x,t.y,40,40); }
+            ctx.fillStyle = t.t==='grass' ? '#4ade80' : '#a16207';
+            ctx.fillRect(t.x-20, t.y-20, 40, 40);
+            ctx.strokeStyle = t.t==='grass' ? '#22c55e' : '#92400e';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(t.x-20, t.y-20, 40, 40);
+            
+            if(t.w) { 
+                ctx.fillStyle='rgba(59, 130, 246, 0.4)'; 
+                ctx.fillRect(t.x-20,t.y-20,40,40); 
+            }
+            
+            // En la parte de dibujar cultivos
             if(t.c !== -1) {
-                // Color segun cultivo (2:Roja, 3:Azul, 4:Naranja)
-                ctx.fillStyle = t.c===2?'#e74c3c': t.c===3?'#3498db':'#e67e22';
-                let s = t.age * 8; 
-                ctx.fillRect(t.x+20-s/2, t.y+20-s/2, s, s);
+                const colors = ['#ef4444', '#3b82f6', '#f59e0b']; // Rojo, Azul, Naranja
+                const plantIcons = ["🍓", "🫐", "🎃"];
+                
+                ctx.fillStyle = colors[t.c-2] || '#e67e22';
+                let size = 15 + (t.age * 4); // Crece de 15 a 31 pixels
+                
+                // Dibujar planta
+                ctx.beginPath();
+                ctx.arc(t.x, t.y, size/2, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Dibujar icono si está maduro
+                if(t.age >= 4) {
+                    ctx.fillStyle = 'white';
+                    ctx.font = '20px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(plantIcons[t.c-2] || "🌱", t.x, t.y);
+                    
+                    // Efecto brillante para cultivo listo
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 3]);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+                
+                // Indicador de crecimiento
+                ctx.fillStyle = 'white';
+                ctx.font = '12px VT323';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${t.age}/4`, t.x, t.y + size/2 + 10);
             }
         });
     } 
     else if (STATE.level === 1) { // Pesca Draw
-        ctx.fillStyle = "#2980b9"; ctx.fillRect(0,0,600,400);
-        // Barra
-        ctx.fillStyle = "#2c3e50"; ctx.fillRect(200, 20, 50, 360);
-        ctx.fillStyle = "#27ae60"; ctx.fillRect(205, 20+STATE.fish.bY, 40, 80);
+        // Fondo agua
+        const gradient = ctx.createLinearGradient(0,0,0,canvas.height);
+        gradient.addColorStop(0, '#0ea5e9');
+        gradient.addColorStop(1, '#0369a1');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        // Barra de pesca
+        ctx.fillStyle = "#1e293b";
+        ctx.fillRect(canvas.width/2 - 25, 20, 50, canvas.height-40);
+        
+        // Red
+        ctx.fillStyle = "#4ade80";
+        ctx.fillRect(canvas.width/2 - 20, 20+STATE.fish.bY, 40, 80);
+        
         // Pez
-        ctx.fillStyle = "#f1c40f"; ctx.fillRect(215, 20+STATE.fish.y, 20, 20);
-        // Progreso
-        ctx.fillStyle = "#222"; ctx.fillRect(260, 20, 20, 360);
-        ctx.fillStyle = "#f39c12"; ctx.fillRect(260, 380-(STATE.fish.p*3.6), 20, STATE.fish.p*3.6);
+        ctx.fillStyle = "#fbbf24";
+        ctx.beginPath();
+        ctx.ellipse(canvas.width/2 - 10, 20+STATE.fish.y, 15, 10, 0, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Ojo del pez
+        ctx.fillStyle = "black";
+        ctx.beginPath();
+        ctx.arc(canvas.width/2 - 15, 20+STATE.fish.y, 3, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Barra de progreso
+        ctx.fillStyle = "#374151";
+        ctx.fillRect(canvas.width/2 + 40, 20, 20, canvas.height-40);
+        const progressHeight = (STATE.fish.p/100) * (canvas.height-40);
+        ctx.fillStyle = STATE.fish.p > 70 ? "#4ade80" : STATE.fish.p > 30 ? "#fbbf24" : "#ef4444";
+        ctx.fillRect(canvas.width/2 + 40, 20 + (canvas.height-40 - progressHeight), 20, progressHeight);
+        
+        // Texto de progreso
+        ctx.fillStyle = "white";
+        ctx.font = "20px VT323";
+        ctx.textAlign = "center";
+        ctx.fillText(`${Math.round(STATE.fish.p)}%`, canvas.width/2 + 50, canvas.height - 10);
     }
-    else { // Otros
-        ctx.fillStyle = STATE.level===3 ? "#3e2723" : "#76c747";
-        ctx.fillRect(0,0,600,400);
+    else { // Otros niveles
+        ctx.fillStyle = STATE.level===3 ? "#1c1917" : "#14532d";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        
+        // Patrón de fondo
+        ctx.strokeStyle = STATE.level===3 ? "rgba(120,113,108,0.3)" : "rgba(134,239,172,0.3)";
+        ctx.lineWidth = 1;
+        for(let x=0; x<canvas.width; x+=40) {
+            for(let y=0; y<canvas.height; y+=40) {
+                ctx.strokeRect(x,y,40,40);
+            }
+        }
+        
         STATE.entities.forEach(e => {
-            ctx.fillStyle = e.type==='rock'?'#7f8c8d' : '#fff';
-            ctx.fillRect(e.x, e.y, 40, 40);
-            if(e.fed) ctx.fillText("❤️", e.x, e.y);
+            // Dibujar entidad
+            if(e.type==='rock') {
+                ctx.fillStyle = '#78716c';
+                ctx.beginPath();
+                ctx.arc(e.x+20, e.y+20, 20, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Grietas
+                ctx.strokeStyle = '#57534e';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(e.x+10, e.y+10);
+                ctx.lineTo(e.x+30, e.y+30);
+                ctx.moveTo(e.x+30, e.y+10);
+                ctx.lineTo(e.x+10, e.y+30);
+                ctx.stroke();
+                
+                // HP
+                ctx.fillStyle = 'white';
+                ctx.font = '14px VT323';
+                ctx.textAlign = 'center';
+                ctx.fillText(e.hp + "/3", e.x+20, e.y+45);
+            } else {
+                // Animales
+                ctx.fillStyle = e.type==='cow' ? '#f5f5f4' : '#fecaca';
+                ctx.fillRect(e.x, e.y, 40, 40);
+                ctx.strokeStyle = e.type==='cow' ? '#a8a29e' : '#f87171';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(e.x, e.y, 40, 40);
+                
+                // Cara
+                ctx.fillStyle = 'black';
+                ctx.fillRect(e.x+10, e.y+15, 5, 5);
+                ctx.fillRect(e.x+25, e.y+15, 5, 5);
+                ctx.fillRect(e.x+15, e.y+25, 10, 5);
+                
+                if(e.fed) {
+                    ctx.fillStyle = '#4ade80';
+                    ctx.font = '20px VT323';
+                    ctx.textAlign = 'center';
+                    ctx.fillText("❤️", e.x+20, e.y+60);
+                }
+            }
         });
     }
 
     if(STATE.level !== 1) {
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(STATE.player.x, STATE.player.y, 30, 30); // Jugador
+        // Dibujar jugador
+        ctx.fillStyle = "#3b82f6";
+        ctx.beginPath();
+        ctx.arc(STATE.player.x+15, STATE.player.y+15, 15, 0, Math.PI*2);
+        ctx.fill();
+        
+        // Borde del jugador
+        ctx.strokeStyle = "#60a5fa";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Herramienta equipada
+        const tools = ["🔱","🚿","🍓","🫐","🎃","✂️"];
+        ctx.fillStyle = "white";
+        ctx.font = "20px VT323";
+        ctx.textAlign = "center";
+        ctx.fillText(tools[STATE.toolIdx] || "👤", STATE.player.x+15, STATE.player.y+22);
     }
 }
 
@@ -637,38 +1606,234 @@ function updateUI() {
     document.getElementById('ui-score').innerText = STATE.score;
     document.getElementById('ui-level').innerText = STATE.level+1;
     document.getElementById('ui-gold').innerText = STATE.gold;
-    document.getElementById('ui-hearts').innerText = "❤️".repeat(STATE.hearts);
+    document.getElementById('ui-hearts').innerHTML = "❤️".repeat(STATE.hearts);
 }
-function setNPC(msg) { document.getElementById('npc-text').innerText = msg; document.getElementById('npc-img').src = IMG.haley; }
-function toast(msg, img) {
-    const t = document.createElement('div'); t.className = 'toast';
-    t.innerHTML = `<img src="${img || IMG.haley}"><span>${msg}</span>`;
-    document.getElementById('toasts').appendChild(t);
-    setTimeout(() => t.remove(), 3000);
+
+function setNPC(msg, imgType = "normal") {
+    const npcImg = document.getElementById('npc-img');
+    const npcText = document.getElementById('npc-text');
+    
+    // Determinar qué imagen usar
+    let imgSrc = IMG.haley; // Por defecto
+    
+    if(imgType === "happy") {
+        imgSrc = IMG.haley_h;
+    } else if(imgType === "abigail") {
+        imgSrc = IMG.abigail;
+    } else if(imgType === "abigail_happy") {
+        imgSrc = IMG.abigail_h;
+    }
+    
+    // Precargar imagen para evitar círculos blancos
+    const preloadImg = new Image();
+    preloadImg.src = imgSrc;
+    preloadImg.onload = () => {
+        npcImg.src = imgSrc;
+        npcImg.style.opacity = "1";
+    };
+    
+    // Si hay error, usar placeholder
+    preloadImg.onerror = () => {
+        npcImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23333'/%3E%3C/svg%3E";
+        npcImg.style.opacity = "0.7";
+    };
+    
+    npcText.innerText = msg;
 }
+
+function toast(msg, img, type = "info") {
+    const toastsContainer = document.getElementById('toasts');
+    
+    // Limitar a 3 toasts máximo
+    if(toastsContainer.children.length >= 3) {
+        toastsContainer.removeChild(toastsContainer.firstChild);
+    }
+    
+    const t = document.createElement('div'); 
+    t.className = `toast ${type}`;
+    
+    // Colores según tipo
+    const colors = {
+        info: {bg: "#3b82f6", border: "#60a5fa"},
+        success: {bg: "#10b981", border: "#34d399"},
+        warning: {bg: "#f59e0b", border: "#fbbf24"},
+        error: {bg: "#ef4444", border: "#f87171"}
+    };
+    
+    const color = colors[type] || colors.info;
+    
+    t.innerHTML = `
+        <img src="${img || IMG.haley}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22${color.bg.substring(1)}%22/%3E%3C/svg%3E'">
+        <span>${msg}</span>
+    `;
+    
+    t.style.borderColor = color.border;
+    t.style.background = `linear-gradient(145deg, ${color.bg}, ${darkenColor(color.bg, 20)})`;
+    
+    toastsContainer.appendChild(t);
+    
+    // Auto-remover después de 2.5 segundos (más rápido)
+    setTimeout(() => {
+        t.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => t.remove(), 300);
+    }, 2500);
+}
+
+function darkenColor(color, percent) {
+    // Simple función para oscurecer colores
+    const num = parseInt(color.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) - amt;
+    const G = (num >> 8 & 0x00FF) - amt;
+    const B = (num & 0x0000FF) - amt;
+    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+}
+
 function buy(item) {
     let cost = item==='heart'?200 : item==='time'?100 : 50;
     if(STATE.gold >= cost) {
         STATE.gold -= cost;
-        if(item==='heart') STATE.hearts++;
-        if(item==='time') STATE.time+=30;
-        if(item==='hint') toast("Pista: Piensa con lógica.", IMG.abigail);
-        toast("¡Comprado!", IMG.haley_h);
+        if(item==='heart') {
+            STATE.hearts = Math.min(10, STATE.hearts+1);
+            toast("+1 Vida ❤️", IMG.haley_h);
+        }
+        if(item==='time') {
+            STATE.time+=30;
+            toast("+30 segundos ⏳", IMG.haley_h);
+        }
+        if(item==='hint') {
+            const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
+            let correct;
+            if(STATE.level===0) {
+                correct = DB[0][seasons[STATE.seasonIdx]][STATE.qIndex].c;
+            } else {
+                correct = DB[STATE.level][STATE.qIndex].c;
+            }
+            const options = document.querySelectorAll('.opt');
+            toast(`Pista: La respuesta es la opción ${correct+1}`, IMG.abigail);
+            options[correct].style.boxShadow = "0 0 15px #4ade80";
+            setTimeout(() => {
+                if(options[correct]) options[correct].style.boxShadow = "";
+            }, 2000);
+        }
         updateUI();
-    } else toast("Falta Oro", IMG.haley);
-}
-function saveProgress() { localStorage.setItem('sv_master_save', JSON.stringify(STATE)); }
-
-// Timer Global
-setInterval(() => {
-    if(document.getElementById('start-screen').style.display==='none') {
-        STATE.time--;
-        document.getElementById('ui-time').innerText = STATE.time + 's';
-        if(STATE.time<=0) { STATE.hearts--; STATE.time=60; toast("¡Tiempo fuera!", IMG.abigail); updateUI(); }
-        if(STATE.hearts<=0) location.reload();
+        saveProgress();
+    } else {
+        toast("¡No tienes suficiente oro! 🪙", IMG.haley);
     }
-}, 1000);
+}
+
+function saveProgress() { 
+    localStorage.setItem('sv_master_save', JSON.stringify(STATE)); 
+}
+
+// ==================== SISTEMA DE CRONÓMETRO MEJORADO ====================
+let timerInterval;
+
+function startTimer() {
+    if(timerInterval) clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
+        if(document.getElementById('start-screen').style.display === 'none' && STATE.time > 0) {
+            STATE.time--;
+            updateTimerDisplay();
+            
+            if(STATE.time <= 0) {
+                timeOut();
+            }
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const timeElement = document.getElementById('ui-time');
+    
+    // Actualizar texto
+    timeElement.innerText = STATE.time + 's';
+    
+    // Cambiar color según tiempo restante
+    if(STATE.time <= 10) {
+        timeElement.style.color = "#ef4444";
+    } else if(STATE.time <= 20) {
+        timeElement.style.color = "#fbbf24";
+    } else {
+        timeElement.style.color = "white";
+    }
+}
+
+function timeOut() {
+    STATE.hearts--;
+    
+    if(STATE.hearts <= 0) {
+        gameOver();
+    } else {
+        // Resetear a 30 segundos para siguiente pregunta
+        STATE.time = 30;
+        updateTimerDisplay();
+        toast("¡Tiempo agotado! -1 Vida", IMG.abigail, "error");
+        updateUI();
+        
+        // Pasar a siguiente pregunta automáticamente
+        setTimeout(() => {
+            STATE.qIndex++;
+            if(STATE.qIndex >= (STATE.level === 0 ? 5 : 20)) {
+                nextLevel();
+            } else {
+                loadQuestion();
+            }
+        }, 1500);
+    }
+}
+
+function resetTimer() {
+    STATE.time = 30;
+    updateTimerDisplay();
+}
+
+// Sistema de estadísticas de acciones
+const actionStats = {
+    plant: 0,
+    water: 0,
+    harvest: 0,
+    plow: 0
+};
+
+function updateActionCounter(action) {
+    if(actionStats[action] !== undefined) {
+        actionStats[action]++;
+        
+        // Mostrar contador flotante si hay muchas acciones
+        if(actionStats[action] % 5 === 0) {
+            const messages = {
+                plant: `🌱 x${actionStats.plant}`,
+                water: `💧 x${actionStats.water}`,
+                harvest: `💰 x${actionStats.harvest}`,
+                plow: `🔱 x${actionStats.plow}`
+            };
+            
+            // Solo mostrar si hay más de 1
+            if(actionStats[action] > 1) {
+                showActionFeedback(messages[action], 100, 50);
+            }
+        }
+    }
+}
+
+// Inicializar canvas al cargar
+window.addEventListener('load', () => {
+    const canvas = document.getElementById('canvas');
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight - 45;
+    
+    // Para debug: verificar que los botones funcionen
+    console.log("Página cargada. Botones disponibles:");
+    console.log("toggleAudio:", typeof toggleAudio);
+    console.log("startGame:", typeof startGame);
+});
 
 </script>
 </body>
 </html>
+
