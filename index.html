@@ -68,7 +68,7 @@
             box-shadow: var(--shadow), var(--glow);
             animation: float 3s ease-in-out infinite;
         }
-
+        
         .game-title-main {
             font-size: clamp(3rem, 8vw, 6rem);
             color: white;
@@ -818,7 +818,11 @@ const IMG = {
 
 // ==================== BASE DE DATOS (100 PREGUNTAS) ====================
 const DB = {
-    // NIVEL 0: AGRICULTURA (20 Preguntas - 5 por estación)
+    // NIVEL 1: AGRICULTURA (5 por estación)
+    
+    // NIVEL 3: GANADERÍA
+    {
+    // NIVEL 1: AGRICULTURA (20 Preguntas - 5 por estación)
     0: {
         "Primavera": [
             {q: "¿Qué hortaliza roja es típica de la primavera?", a: ["Fresa", "Sandía", "Calabaza", "Trigo"], c: 0},
@@ -850,7 +854,7 @@ const DB = {
         ]
     },
     
-    // NIVEL 1: PESCA (10 Preguntas) 
+    // NIVEL 2: PESCA (10 Preguntas) 
     1: [
         {q: "¿El agua del mar es?", a: ["Salada", "Dulce", "Destilada", "Mineral"], c: 0},
         {q: "¿Pez que remonta ríos?", a: ["Salmón", "Atún", "Sardina", "Carpa"], c: 0},
@@ -864,7 +868,7 @@ const DB = {
         {q: "¿Cual es el crustáceo con pinzas?", a: ["Cangrejo", "Pulpo", "Medusa", "Estrella"], c: 0}
     ],
     
-    // NIVEL 2: GANADERÍA (10 Preguntas) 
+    // NIVEL 3: GANADERÍA (10 Preguntas) 
     2: [
         {q: "¿Qué animal de la granja es la fuente principal de la leche que consumen los humanos?", a: ["La gallina", "El cabello", "La vaca", "El cerdo"], c: 2},
         {q: "¿Qué animal nos proporciona lana para hacer ropa y mantas?", a: ["La cabra", "La oveja", "El pato", "La vaca"], c: 1},
@@ -876,35 +880,35 @@ const DB = {
         {q: "¿Qué animal cacarea y pone huevos que comemos en el desayuno?", a: ["El pato", "El pavo", "La gallina", "El ganso"], c: 2},
         {q: "¿Qué animal ayuda a menudo al granjero a cuidar y guiar a las ovejas?", a: ["La cabra", "El gato", "El perro pastor", "El burro"], c: 2},
         {q: "¿Qué se utiliza para ordeñar vacas en las granjas modernas grandes?", a: ["Mangueras de agua", "Cubos de plástico solamente", "Máquinas ordeñadoras", "Tijeras"], c: 2}
-    ],
-    
-    // NIVEL 3: MINERÍA (10 Preguntas)
-    3: [
-        {q: "¿Qué mineral se extrae comúnmente para fabricar herramientas agrícolas?", a: ["Hierro", "Oro", "Plata", "Cobre"], c: 0},
-        {q: "¿Qué metal precioso se encuentra a veces en terrenos de granjas?", a: ["Oro", "Hierro", "Aluminio", "Bronce"], c: 0},
-        {q: "¿Qué roca se tritura para mejorar suelos ácidos?", a: ["Caliza", "Granito", "Mármol", "Pizarra"], c: 0},
-        {q: "¿Qué mineral es esencial para la fabricación de fertilizantes?", a: ["Fosfato", "Hierro", "Cobre", "Carbón"], c: 0},
-        {q: "¿Qué tipo de mina se excava en la superficie de la tierra?", a: ["Cielo abierto", "Subterránea", "Aluvial", "Marina"], c: 0},
-        {q: "¿Qué herramienta tradicional se usa en minería para romper rocas?", a: ["Pico", "Azada", "Pala", "Rastrillo"], c: 0},
-        {q: "¿Qué mineral se extrae para obtener sal?", a: ["Halita", "Calcita", "Cuarzo", "Yeso"], c: 0},
-        {q: "¿Qué máquina perforadora se usa en minería?", a: ["Taladro", "Tractor", "Cosechadora", "Empacadora"], c: 0},
-        {q: "¿Qué metal se usa para cableado eléctrico en granjas?", a: ["Cobre", "Hierro", "Acero", "Aluminio"], c: 0},
-        {q: "¿Qué material se extrae de canteras para construcción?", a: ["Piedra", "Petróleo", "Gas", "Carbón"], c: 0}
-    ],
-    
-    // NIVEL 4: TECNOLOGÍA (10 Preguntas)
-    4: [
-        {q: "¿Qué máquina automatizada ara la tierra?", a: ["Tractor", "Cosechadora", "Sembradora", "Rastrillo"], c: 0},
-        {q: "¿Qué dispositivo usa GPS para guiar maquinaria?", a: ["Piloto automático", "Drone", "Sensor", "Riego"], c: 0},
-        {q: "¿Qué tecnología aérea monitorea cultivos?", a: ["Drones", "Satélites", "Aviones", "Globos"], c: 0},
-        {q: "¿Qué sistema automatizado administra el agua?", a: ["Riego inteligente", "Manguera", "Regadera", "Canal"], c: 0},
-        {q: "¿Qué sensor mide la humedad del suelo?", a: ["Higrómetro", "Termómetro", "Barómetro", "Anemómetro"], c: 0},
-        {q: "¿Qué software gestiona la producción agrícola?", a: ["ERP agrícola", "Excel", "Word", "Photoshop"], c: 0},
-        {q: "¿Qué energía renovable se instala en granjas?", a: ["Paneles solares", "Carbón", "Petróleo", "Gas"], c: 0},
-        {q: "¿Qué robot ordeña vacas automáticamente?", a: ["Robot ordeñador", "Tractor", "Drone", "Sembradora"], c: 0},
-        {q: "¿Qué tecnología identifica plagas en cultivos?", a: ["Sensores", "Binoculares", "Trampas", "Insectos"], c: 0},
-        {q: "¿Qué sistema climático monitorea temperatura y lluvia?", a: ["Estación meteorológica", "Radar", "GPS", "Drone"], c: 0}
     ]
+}
+    // NIVEL 4: MINERÍA
+4: [
+    {q: "¿Qué mineral se extrae comúnmente para fabricar herramientas agrícolas?", a: ["Hierro", "Oro", "Plata", "Cobre"], c: 0},
+    {q: "¿Qué metal precioso se encuentra a veces en terrenos de granjas?", a: ["Oro", "Hierro", "Aluminio", "Bronce"], c: 0},
+    {q: "¿Qué roca se tritura para mejorar suelos ácidos?", a: ["Caliza", "Granito", "Mármol", "Pizarra"], c: 0},
+    {q: "¿Qué mineral es esencial para la fabricación de fertilizantes?", a: ["Fosfato", "Hierro", "Cobre", "Carbón"], c: 0},
+    {q: "¿Qué tipo de mina se excava en la superficie de la tierra?", a: ["Cielo abierto", "Subterránea", "Aluvial", "Marina"], c: 0},
+    {q: "¿Qué herramienta tradicional se usa en minería para romper rocas?", a: ["Pico", "Azada", "Pala", "Rastrillo"], c: 0},
+    {q: "¿Qué mineral se extrae para obtener sal?", a: ["Halita", "Calcita", "Cuarzo", "Yeso"], c: 0},
+    {q: "¿Qué máquina perforadora se usa en minería?", a: ["Taladro", "Tractor", "Cosechadora", "Empacadora"], c: 0},
+    {q: "¿Qué metal se usa para cableado eléctrico en granjas?", a: ["Cobre", "Hierro", "Acero", "Aluminio"], c: 0},
+    {q: "¿Qué material se extrae de canteras para construcción?", a: ["Piedra", "Petróleo", "Gas", "Carbón"], c: 0}
+]
+    // NIVEL 5: TECNOLOGÍA
+5: [
+    {q: "¿Qué máquina automatizada ara la tierra?", a: ["Tractor", "Cosechadora", "Sembradora", "Rastrillo"], c: 0},
+    {q: "¿Qué dispositivo usa GPS para guiar maquinaria?", a: ["Piloto automático", "Drone", "Sensor", "Riego"], c: 0},
+    {q: "¿Qué tecnología aérea monitorea cultivos?", a: ["Drones", "Satélites", "Aviones", "Globos"], c: 0},
+    {q: "¿Qué sistema automatizado administra el agua?", a: ["Riego inteligente", "Manguera", "Regadera", "Canal"], c: 0},
+    {q: "¿Qué sensor mide la humedad del suelo?", a: ["Higrómetro", "Termómetro", "Barómetro", "Anemómetro"], c: 0},
+    {q: "¿Qué software gestiona la producción agrícola?", a: ["ERP agrícola", "Excel", "Word", "Photoshop"], c: 0},
+    {q: "¿Qué energía renovable se instala en granjas?", a: ["Paneles solares", "Carbón", "Petróleo", "Gas"], c: 0},
+    {q: "¿Qué robot ordeña vacas automáticamente?", a: ["Robot ordeñador", "Tractor", "Drone", "Sembradora"], c: 0},
+    {q: "¿Qué tecnología identifica plagas en cultivos?", a: ["Sensores", "Binoculares", "Trampas", "Insectos"], c: 0},
+    {q: "¿Qué sistema climático monitorea temperatura y lluvia?", a: ["Estación meteorológica", "Radar", "GPS", "Drone"], c: 0}
+]
+
 };
 
 // HERRAMIENTAS
@@ -924,13 +928,13 @@ const STATE = {
     level: 0, seasonIdx: 0, qIndex: 0, qTotal: 0,
     hearts: 5, gold: 0, score: 0, time: 30,
     inventory: [], toolIdx: 0, selOpt: -1,
+    currentCorrectPosition: 0, // <--- AÑADE ESTA LÍNEA AQUÍ
     loop: null,
     // Minijuego
     farm: [], fish: {y:200, t:200, bY:200, bV:0, p:30, catch:0},
     entities: [],
     player: {x:300, y:200, w:30, h:30}
 };
-
 // AUDIO
 const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3");
 audio.loop = true; audio.volume = 0.3;
@@ -1059,15 +1063,19 @@ function loadQuestion() {
     }
 
     let qData;
+    let correctIndex; // Guardaremos el índice original de la respuesta correcta
+    
     if(STATE.level === 0) {
         const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
         if(STATE.qIndex >= 5) { STATE.seasonIdx++; STATE.qIndex=0; }
         if(STATE.seasonIdx > 3) { nextLevel(); return; }
         document.getElementById('season-tag').innerText = seasons[STATE.seasonIdx];
         qData = DB[0][seasons[STATE.seasonIdx]][STATE.qIndex];
+        correctIndex = qData.c; // Guardamos el índice correcto original
     } else {
         if(STATE.qIndex >= 20) { nextLevel(); return; }
         qData = DB[STATE.level][STATE.qIndex];
+        correctIndex = qData.c; // Guardamos el índice correcto original
     }
 
     document.getElementById('q-text').innerText = qData.q;
@@ -1078,18 +1086,32 @@ function loadQuestion() {
     STATE.selOpt = -1;
     document.getElementById('btn-confirm').disabled = true;
 
-    // Mezclar opciones
-    let opts = qData.a.map((txt, i) => ({txt, i}));
-    opts.sort(()=>Math.random()-0.5);
+    // Mezclar opciones PERO mantener registro de cuál es la correcta
+    let opts = qData.a.map((txt, i) => ({txt, originalIndex: i})); // Guardamos índice original
+    opts.sort(() => Math.random() - 0.5);
 
-    opts.forEach(o => {
+    // Buscar cuál es la nueva posición de la respuesta correcta
+    let newCorrectIndex = -1;
+    opts.forEach((o, position) => {
+        if(o.originalIndex === correctIndex) {
+            newCorrectIndex = position; // Esta es la nueva posición de la respuesta correcta
+        }
+    });
+
+    // Guardar la nueva posición de la respuesta correcta en STATE
+    STATE.currentCorrectPosition = newCorrectIndex;
+
+    opts.forEach((o, position) => {
         const btn = document.createElement('button');
         btn.className = 'opt';
         btn.innerText = o.txt;
+        btn.dataset.originalIndex = o.originalIndex; // Guardamos el índice original
+        btn.dataset.position = position; // Guardamos la posición actual
+        
         btn.onclick = () => {
-            document.querySelectorAll('.opt').forEach(b=>b.classList.remove('selected'));
+            document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            STATE.selOpt = o.i;
+            STATE.selOpt = position; // Guardamos la POSICIÓN seleccionada, no el índice original
             document.getElementById('btn-confirm').disabled = false;
             document.getElementById('btn-confirm').style.background = "linear-gradient(to bottom, #3b82f6, #1d4ed8)";
             document.getElementById('btn-confirm').style.borderColor = "#60a5fa";
@@ -1110,22 +1132,23 @@ function checkAnswer() {
         return;
     }
 
-    let correct;
-    if(STATE.level===0) {
-        const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
-        correct = DB[0][seasons[STATE.seasonIdx]][STATE.qIndex].c;
-    } else {
-        correct = DB[STATE.level][STATE.qIndex].c;
-    }
+    // La respuesta correcta está en STATE.currentCorrectPosition
+    const isCorrect = (STATE.selOpt === STATE.currentCorrectPosition);
 
     const options = document.querySelectorAll('.opt');
     options.forEach((opt, i) => {
-        if(i === correct) opt.classList.add('correct');
-        if(i === STATE.selOpt && i !== correct) opt.classList.add('incorrect');
+        // Marcar la respuesta correcta visualmente
+        if(i === STATE.currentCorrectPosition) {
+            opt.classList.add('correct');
+        }
+        // Marcar la respuesta incorrecta si el usuario seleccionó algo incorrecto
+        if(i === STATE.selOpt && !isCorrect) {
+            opt.classList.add('incorrect');
+        }
     });
 
     setTimeout(() => {
-        if(STATE.selOpt === correct) {
+        if(isCorrect) {
             STATE.score += 100; 
             STATE.gold += 50; 
             STATE.qTotal++;
@@ -1151,7 +1174,6 @@ function checkAnswer() {
         }, 1500);
     }, 1500);
 }
-
 function gameOver() {
     alert("¡GAME OVER!\nPuntuación: " + STATE.score + "\nOro: " + STATE.gold + "g");
     localStorage.removeItem('sv_master_save');
@@ -1741,19 +1763,24 @@ function buy(item) {
             toast("+30 segundos ⏳", IMG.haley_h);
         }
         if(item==='hint') {
-            const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
-            let correct;
-            if(STATE.level===0) {
-                correct = DB[0][seasons[STATE.seasonIdx]][STATE.qIndex].c;
-            } else {
-                correct = DB[STATE.level][STATE.qIndex].c;
-            }
+            // Usar STATE.currentCorrectPosition que es la posición actual de la respuesta correcta
+            const correctPosition = STATE.currentCorrectPosition;
             const options = document.querySelectorAll('.opt');
-            toast(`Pista: La respuesta es la opción ${correct+1}`, IMG.abigail);
-            options[correct].style.boxShadow = "0 0 15px #4ade80";
-            setTimeout(() => {
-                if(options[correct]) options[correct].style.boxShadow = "";
-            }, 2000);
+            
+            if(options[correctPosition]) {
+                toast(`Pista: ¡Esa opción brilla! ✨`, IMG.abigail);
+                options[correctPosition].style.boxShadow = "0 0 20px #4ade80, 0 0 40px #22c55e";
+                options[correctPosition].style.borderColor = "#4ade80";
+                options[correctPosition].style.transform = "scale(1.05)";
+                
+                setTimeout(() => {
+                    if(options[correctPosition]) {
+                        options[correctPosition].style.boxShadow = "";
+                        options[correctPosition].style.borderColor = "";
+                        options[correctPosition].style.transform = "";
+                    }
+                }, 2000);
+            }
         }
         updateUI();
         saveProgress();
@@ -1761,7 +1788,6 @@ function buy(item) {
         toast("¡No tienes suficiente oro! 🪙", IMG.haley);
     }
 }
-
 function saveProgress() { 
     localStorage.setItem('sv_master_save', JSON.stringify(STATE)); 
 }
@@ -1873,6 +1899,3 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
-
-
-
