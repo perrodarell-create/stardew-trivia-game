@@ -819,55 +819,96 @@ const IMG = {
 // ==================== BASE DE DATOS (100 PREGUNTAS) ====================
 const DB = {
     // NIVEL 1: AGRICULTURA (5 por estación)
+    
+    // NIVEL 3: GANADERÍA
+    {
+    // NIVEL 1: AGRICULTURA (20 Preguntas - 5 por estación)
     0: {
         "Primavera": [
-            {q: "¿Qué hortaliza roja es típica de la primavera?", a:["Fresa","Sandía","Calabaza","Trigo"], c:0},
-            {q: "¿Qué herramienta voltea la tierra?", a:["Azada","Pico","Hacha","Guadaña"], c:0},
-            {q: "¿Qué flor sigue al sol?", a:["Girasol","Rosa","Tulipán","Orquídea"], c:0},
-            {q: "¿Qué necesitan las semillas para nacer?", a:["Agua y Calor","Oscuridad","Frío","Viento"], c:0},
-            {q: "¿Qué parte de las plantas empieza a brotar y a llenar el paisaje de colores vivos durante la primavera?", a:["Frijol","Las raices","Las flores","Las espinas"], c:2}
+            {q: "¿Qué hortaliza roja es típica de la primavera?", a: ["Fresa", "Sandía", "Calabaza", "Trigo"], c: 0},
+            {q: "¿Qué herramienta voltea la tierra?", a: ["Azada", "Pico", "Hacha", "Guadaña"], c: 0},
+            {q: "¿Qué flor sigue al sol?", a: ["Girasol", "Rosa", "Tulipán", "Orquídea"], c: 0},
+            {q: "¿Qué necesitan las semillas para nacer?", a: ["Agua y Calor", "Oscuridad", "Frío", "Viento"], c: 0},
+            {q: "¿Qué parte de las plantas empieza a brotar y a llenar el paisaje de colores vivos durante la primavera?", a: ["Frijol", "Las raices", "Las flores", "Las espinas"], c: 2}
         ],
         "Verano": [
-            {q: "¿Qué baya azul crece en arbustos en verano?", a:["Arándano","Fresa","Mora","Cereza"], c:0},
-            {q: "¿Qué cultivo necesita mucha agua y sol?", a:["Melón","Ajo","Espinaca","Col"], c:0},
-            {q: "¿Qué insecto poliniza más?", a:["Abeja","Hormiga","Mosca","Grillo"], c:0},
-            {q: "¿Qué cereal crece en mazorcas?", a:["Maíz","Trigo","Arroz","Avena"], c:0},
-            {q: "¿Qué sistema de riego es más eficiente?", a:["Goteo","Inundación","Manguera","Aspersor"], c:0}
+            {q: "¿Qué baya azul crece en arbustos en verano?", a: ["Arándano", "Fresa", "Mora", "Cereza"], c: 0},
+            {q: "¿Qué cultivo necesita mucha agua y sol?", a: ["Melón", "Ajo", "Espinaca", "Col"], c: 0},
+            {q: "¿Qué insecto poliniza más?", a: ["Abeja", "Hormiga", "Mosca", "Grillo"], c: 0},
+            {q: "¿Qué cereal crece en mazorcas?", a: ["Maíz", "Trigo", "Arroz", "Avena"], c: 0},
+            {q: "¿Qué sistema de riego es más eficiente?", a: ["Goteo", "Inundación", "Manguera", "Aspersor"], c: 0}
         ],
         "Otoño": [
-            {q: "¿Qué hortaliza naranja se usa en Halloween?", a:["Calabaza","Zanahoria","Naranja","Melocotón"], c:0},
-            {q: "¿Qué fruto seco cae de los robles?", a:["Bellota","Nuez","Almendra","Pistacho"], c:0},
-            {q: "¿Qué flor morada florece en otoño?", a:["Amaranto","Rosa","Girasol","Tulipán"], c:0},
-            {q: "¿Qué hongo es comestible?", a:["Champiñón","Amanita","Moho","Hongo Rojo"], c:0},
-            {q: "¿Qué herramienta junta hojas secas?", a:["Rastrillo","Pala","Pico","Azada"], c:0}
+            {q: "¿Qué hortaliza naranja se usa en Halloween?", a: ["Calabaza", "Zanahoria", "Naranja", "Melocotón"], c: 0},
+            {q: "¿Qué fruto seco cae de los robles?", a: ["Bellota", "Nuez", "Almendra", "Pistacho"], c: 0},
+            {q: "¿Qué flor morada florece en otoño?", a: ["Amaranto", "Rosa", "Girasol", "Tulipán"], c: 0},
+            {q: "¿Qué hongo es comestible?", a: ["Champiñón", "Amanita", "Moho", "Hongo Rojo"], c: 0},
+            {q: "¿Qué herramienta junta hojas secas?", a: ["Rastrillo", "Pala", "Pico", "Azada"], c: 0}
         ],
         "Invierno": [
-            {q: "¿Qué estructura de una granja protege del frío?", a:["Invernadero","Silo","Establo","Pozo"], c:0},
-            {q: "¿Qué hacen los árboles en invierno?", a:["Dormancia","Crecer","Florecer","Morir"], c:0},
-            {q: "¿Qué raíz resiste el frío?", a:["Zanahoria","Tomate","Sandía","Pimiento"], c:0},
-            {q: "¿Qué cristaliza el agua en las plantas?", a:["Helada","Rocío","Niebla","Lluvia"], c:0},
-            {q: "¿Qué actividad agrícola se hace en invierno?", a:["Poda","Siembra","Cosecha","Riego"], c:0}
+            {q: "¿Qué estructura de una granja protege del frío?", a: ["Invernadero", "Silo", "Establo", "Pozo"], c: 0},
+            {q: "¿Qué hacen los árboles en invierno?", a: ["Dormancia", "Crecer", "Florecer", "Morir"], c: 0},
+            {q: "¿Qué raíz resiste el frío?", a: ["Zanahoria", "Tomate", "Sandía", "Pimiento"], c: 0},
+            {q: "¿Qué cristaliza el agua en las plantas?", a: ["Helada", "Rocío", "Niebla", "Lluvia"], c: 0},
+            {q: "¿Qué actividad agrícola se hace en invierno?", a: ["Poda", "Siembra", "Cosecha", "Riego"], c: 0}
         ]
     },
-    // NIVEL 2: PESCA (10 Preguntas)
+    
+    // NIVEL 2: PESCA (10 Preguntas) 
     1: [
-        {q:"¿El agua del mar es?", a:["Salada","Dulce","Destilada","Mineral"], c:0},
-        {q:"¿Pez que remonta ríos?", a:["Salmón","Atún","Sardina","Carpa"], c:0},
-        {q:"¿Órgano de los peces para respirar bajo agua?", a:["Branquias","Pulmones","Nariz","Piel"], c:0},
-        {q:"¿Como se le conoce a la cría de peces controlada?", a:["Acuicultura","Pesca","Caza","Ganadería"], c:0},
-        {q:"¿Pez plano del fondo marino?", a:["Lenguado","Trucha","Dorado","Pez Espada"], c:0},
-        {q:"¿Cual es un cebo artificial?", a:["Señuelo","Gusano","Pan","Maíz"], c:0},
-        {q:"¿Cual es el pez gigante del río?", a:["Esturión","Sardina","Anchoa","Payaso"], c:0},
-        {q:"¿Qué atrae a los peces?", a:["Movimiento/Olor","Ruido","Luz fuerte","Gritos"], c:0},
-        {q:"¿Pez famoso por ser venenoso?", a:["Pez Globo","Salmón","Tilapia","Merluza"], c:0},
-        {q:"¿Cual es el crustáceo con pinzas?", a:["Cangrejo","Pulpo","Medusa","Estrella"], c:0}
+        {q: "¿El agua del mar es?", a: ["Salada", "Dulce", "Destilada", "Mineral"], c: 0},
+        {q: "¿Pez que remonta ríos?", a: ["Salmón", "Atún", "Sardina", "Carpa"], c: 0},
+        {q: "¿Órgano de los peces para respirar bajo agua?", a: ["Branquias", "Pulmones", "Nariz", "Piel"], c: 0},
+        {q: "¿Como se le conoce a la cría de peces controlada?", a: ["Acuicultura", "Pesca", "Caza", "Ganadería"], c: 0},
+        {q: "¿Pez plano del fondo marino?", a: ["Lenguado", "Trucha", "Dorado", "Pez Espada"], c: 0},
+        {q: "¿Cual es un cebo artificial?", a: ["Señuelo", "Gusano", "Pan", "Maíz"], c: 0},
+        {q: "¿Cual es el pez gigante del río?", a: ["Esturión", "Sardina", "Anchoa", "Payaso"], c: 0},
+        {q: "¿Qué atrae a los peces?", a: ["Movimiento/Olor", "Ruido", "Luz fuerte", "Gritos"], c: 0},
+        {q: "¿Pez famoso por ser venenoso?", a: ["Pez Globo", "Salmón", "Tilapia", "Merluza"], c: 0},
+        {q: "¿Cual es el crustáceo con pinzas?", a: ["Cangrejo", "Pulpo", "Medusa", "Estrella"], c: 0}
     ],
-    // NIVEL 3: GANADERÍA
-    2: Array(20).fill({q:"¿Qué come la vaca?", a:["Pasto","Carne","Piedras","Plástico"], c:0}),
+    
+    // NIVEL 3: GANADERÍA (10 Preguntas) 
+    2: [
+        {q: "¿Qué animal de la granja es la fuente principal de la leche que consumen los humanos?", a: ["La gallina", "El cabello", "La vaca", "El cerdo"], c: 2},
+        {q: "¿Qué animal nos proporciona lana para hacer ropa y mantas?", a: ["La cabra", "La oveja", "El pato", "La vaca"], c: 1},
+        {q: "¿Cómo se llama a la cría recién nacida de una gallina?", a: ["Cordero", "Potro", "Pollito", "Ternero"], c: 2},
+        {q: "¿Dónde viven generalmente los caballos en una granja?", a: ["En el gallinero", "En la conejera", "En la pocilga", "En el establo"], c: 3},
+        {q: "¿Cuál es el alimento principal de las vacas y ovejas en el pastoreo?", a: ["Pasto y heno", "Carne", "Pescado", "Insectos"], c: 0},
+        {q: "¿Qué animal es conocido por revolcarse en el lodo para mantenerse fresco?", a: ["El gato", "El cerdo", "La gallina", "El conejo"], c: 1},
+        {q: "¿Cómo se llama la cría de la vaca?", a: ["Lechón", "Ternero", "Cabrito", "Gazapo"], c: 1},
+        {q: "¿Qué animal cacarea y pone huevos que comemos en el desayuno?", a: ["El pato", "El pavo", "La gallina", "El ganso"], c: 2},
+        {q: "¿Qué animal ayuda a menudo al granjero a cuidar y guiar a las ovejas?", a: ["La cabra", "El gato", "El perro pastor", "El burro"], c: 2},
+        {q: "¿Qué se utiliza para ordeñar vacas en las granjas modernas grandes?", a: ["Mangueras de agua", "Cubos de plástico solamente", "Máquinas ordeñadoras", "Tijeras"], c: 2}
+    ]
+}
     // NIVEL 4: MINERÍA
-    3: Array(20).fill({q:"¿Mineral más duro?", a:["Diamante","Talco","Hierro","Oro"], c:0}),
+4: [
+    {q: "¿Qué mineral se extrae comúnmente para fabricar herramientas agrícolas?", a: ["Hierro", "Oro", "Plata", "Cobre"], c: 0},
+    {q: "¿Qué metal precioso se encuentra a veces en terrenos de granjas?", a: ["Oro", "Hierro", "Aluminio", "Bronce"], c: 0},
+    {q: "¿Qué roca se tritura para mejorar suelos ácidos?", a: ["Caliza", "Granito", "Mármol", "Pizarra"], c: 0},
+    {q: "¿Qué mineral es esencial para la fabricación de fertilizantes?", a: ["Fosfato", "Hierro", "Cobre", "Carbón"], c: 0},
+    {q: "¿Qué tipo de mina se excava en la superficie de la tierra?", a: ["Cielo abierto", "Subterránea", "Aluvial", "Marina"], c: 0},
+    {q: "¿Qué herramienta tradicional se usa en minería para romper rocas?", a: ["Pico", "Azada", "Pala", "Rastrillo"], c: 0},
+    {q: "¿Qué mineral se extrae para obtener sal?", a: ["Halita", "Calcita", "Cuarzo", "Yeso"], c: 0},
+    {q: "¿Qué máquina perforadora se usa en minería?", a: ["Taladro", "Tractor", "Cosechadora", "Empacadora"], c: 0},
+    {q: "¿Qué metal se usa para cableado eléctrico en granjas?", a: ["Cobre", "Hierro", "Acero", "Aluminio"], c: 0},
+    {q: "¿Qué material se extrae de canteras para construcción?", a: ["Piedra", "Petróleo", "Gas", "Carbón"], c: 0}
+]
     // NIVEL 5: TECNOLOGÍA
-    4: Array(20).fill({q:"¿Riego automático?", a:["Aspersor","Manguera","Cubo","Nubes"], c:0})
+5: [
+    {q: "¿Qué máquina automatizada ara la tierra?", a: ["Tractor", "Cosechadora", "Sembradora", "Rastrillo"], c: 0},
+    {q: "¿Qué dispositivo usa GPS para guiar maquinaria?", a: ["Piloto automático", "Drone", "Sensor", "Riego"], c: 0},
+    {q: "¿Qué tecnología aérea monitorea cultivos?", a: ["Drones", "Satélites", "Aviones", "Globos"], c: 0},
+    {q: "¿Qué sistema automatizado administra el agua?", a: ["Riego inteligente", "Manguera", "Regadera", "Canal"], c: 0},
+    {q: "¿Qué sensor mide la humedad del suelo?", a: ["Higrómetro", "Termómetro", "Barómetro", "Anemómetro"], c: 0},
+    {q: "¿Qué software gestiona la producción agrícola?", a: ["ERP agrícola", "Excel", "Word", "Photoshop"], c: 0},
+    {q: "¿Qué energía renovable se instala en granjas?", a: ["Paneles solares", "Carbón", "Petróleo", "Gas"], c: 0},
+    {q: "¿Qué robot ordeña vacas automáticamente?", a: ["Robot ordeñador", "Tractor", "Drone", "Sembradora"], c: 0},
+    {q: "¿Qué tecnología identifica plagas en cultivos?", a: ["Sensores", "Binoculares", "Trampas", "Insectos"], c: 0},
+    {q: "¿Qué sistema climático monitorea temperatura y lluvia?", a: ["Estación meteorológica", "Radar", "GPS", "Drone"], c: 0}
+]
+
 };
 
 // HERRAMIENTAS
@@ -1836,4 +1877,5 @@ window.addEventListener('load', () => {
 </script>
 </body>
 </html>
+
 
