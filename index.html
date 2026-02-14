@@ -150,7 +150,7 @@
             border-radius: 20px;
             box-shadow: var(--shadow);
             overflow: hidden;
-            display: none; /* Se activa con JS */
+            display: none;
         }
 
         /* HEADER MEJORADO */
@@ -239,6 +239,7 @@
             border-radius: 12px;
             backdrop-filter: blur(10px);
             transition: all 0.3s;
+            position: relative;
         }
         
         .stat-card:hover {
@@ -263,6 +264,41 @@
         
         .hearts { color: #ef4444; }
         .gold { color: var(--gold); }
+
+        /* ANIMACIONES PARA EL CRONÓMETRO */
+        @keyframes walk {
+            0% { transform: translateY(-50%) translateX(0); }
+            100% { transform: translateY(-50%) translateX(5px); }
+        }
+        
+        @keyframes panic {
+            0% { transform: translateY(-50%) translateX(0) rotate(-5deg); }
+            100% { transform: translateY(-50%) translateX(10px) rotate(5deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+        
+        @keyframes floatParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), -50px) scale(0); opacity: 0; }
+        }
+        
+        .time-warning {
+            animation: pulse 1s infinite !important;
+            color: #fbbf24 !important;
+            font-weight: bold;
+        }
+        
+        .time-critical {
+            animation: shake 0.5s infinite !important;
+            color: #ef4444 !important;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
 
         /* CONTENIDO PRINCIPAL - RESPONSIVE */
         .game-content {
@@ -907,7 +943,6 @@ const DB = {
     ]
 };
 
-// ==================== BASE DE DATOS (60 PREGUNTAS) ====================
 // HERRAMIENTAS
 const TOOLS = {
     farm: [
@@ -925,13 +960,180 @@ const STATE = {
     level: 0, seasonIdx: 0, qIndex: 0, qTotal: 0,
     hearts: 5, gold: 0, score: 0, time: 30,
     inventory: [], toolIdx: 0, selOpt: -1,
-    currentCorrectPosition: 0, // <--- AÑADE ESTA LÍNEA AQUÍ
+    currentCorrectPosition: 0,
     loop: null,
     // Minijuego
     farm: [], fish: {y:200, t:200, bY:200, bV:0, p:30, catch:0},
     entities: [],
     player: {x:300, y:200, w:30, h:30}
 };
+
+// ==================== SILUETA ANIMADA PARA CRONÓMETRO ====================
+let chickenFrame = 0;
+let chickenAnimationTimer = 0;
+
+function drawAnimatedTimer() {
+    const timeElement = document.getElementById('ui-time');
+    const timeContainer = timeElement.parentElement;
+    
+    let silhouetteContainer = document.getElementById('timer-silhouette');
+    if (!silhouetteContainer) {
+        silhouetteContainer = document.createElement('div');
+        silhouetteContainer.id = 'timer-silhouette';
+        silhouetteContainer.style.cssText = `
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 10;
+        `;
+        timeContainer.style.position = 'relative';
+        timeContainer.appendChild(silhouetteContainer);
+    }
+    
+    chickenAnimationTimer++;
+    if (chickenAnimationTimer > 8) {
+        chickenAnimationTimer = 0;
+        chickenFrame = (chickenFrame + 1) % 4;
+    }
+    
+    const timeLeft = STATE.time;
+    let animation = '';
+    let animationStyle = '';
+    
+    if (timeLeft <= 10) {
+        const frames = ['🐔💨', '🐓💨', '🐔💨', '🐓💨'];
+        animation = frames[chickenFrame];
+        silhouetteContainer.style.filter = 'drop-shadow(0 0 8px #ef4444)';
+        silhouetteContainer.style.fontSize = '42px';
+        animationStyle = 'panic 0.3s steps(2) infinite';
+    } else if (timeLeft <= 20) {
+        const frames = ['🐔', '🐓', '🐔', '🐓'];
+        animation = frames[chickenFrame];
+        silhouetteContainer.style.filter = 'drop-shadow(0 0 8px #fbbf24)';
+        silhouetteContainer.style.fontSize = '38px';
+        animationStyle = 'walk 0.5s steps(2) infinite';
+    } else {
+        const frames = ['🐔', '🐓', '🐔', '🐓'];
+        animation = frames[chickenFrame];
+        silhouetteContainer.style.filter = 'drop-shadow(0 0 8px #4ade80)';
+        silhouetteContainer.style.fontSize = '35px';
+        animationStyle = 'walk 0.8s steps(2) infinite';
+    }
+    
+    silhouetteContainer.style.animation = animationStyle;
+    silhouetteContainer.innerHTML = animation;
+    
+    if (timeLeft <= 5 && timeLeft > 0 && Math.random() < 0.3) {
+        createTimeParticles();
+    }
+}
+
+function createTimeParticles() {
+    const timeElement = document.getElementById('ui-time');
+    if (!timeElement) return;
+    
+    const rect = timeElement.getBoundingClientRect();
+    const particles = document.createElement('div');
+    particles.style.cssText = `
+        position: fixed;
+        top: ${rect.top}px;
+        left: ${rect.right}px;
+        pointer-events: none;
+        z-index: 1000;
+    `;
+    
+    for (let i = 0; i < 3; i++) {
+        const particle = document.createElement('span');
+        particle.innerHTML = '⏰';
+        particle.style.cssText = `
+            position: absolute;
+            font-size: 24px;
+            animation: floatParticle ${0.5 + Math.random() * 0.5}s ease-out forwards;
+            left: ${Math.random() * 50 - 25}px;
+            top: ${Math.random() * 50 - 25}px;
+            color: #ef4444;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        `;
+        particles.appendChild(particle);
+    }
+    
+    document.body.appendChild(particles);
+    setTimeout(() => particles.remove(), 1000);
+}
+
+// ==================== SISTEMA DE CRONÓMETRO MEJORADO ====================
+let timerInterval;
+
+function startTimer() {
+    if(timerInterval) clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
+        if(document.getElementById('start-screen').style.display === 'none' && STATE.time > 0) {
+            STATE.time--;
+            updateTimerDisplay();
+            
+            if(STATE.time <= 0) {
+                timeOut();
+            }
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const timeElement = document.getElementById('ui-time');
+    
+    timeElement.innerText = STATE.time + 's';
+    
+    if(STATE.time <= 10) {
+        timeElement.style.color = "#ef4444";
+        timeElement.classList.add('time-critical');
+        timeElement.classList.remove('time-warning');
+    } else if(STATE.time <= 20) {
+        timeElement.style.color = "#fbbf24";
+        timeElement.classList.add('time-warning');
+        timeElement.classList.remove('time-critical');
+    } else {
+        timeElement.style.color = "white";
+        timeElement.classList.remove('time-warning', 'time-critical');
+    }
+    
+    drawAnimatedTimer();
+}
+
+function resetTimer() {
+    STATE.time = 30;
+    updateTimerDisplay();
+}
+
+function timeOut() {
+    STATE.hearts--;
+    
+    if(STATE.hearts <= 0) {
+        gameOver();
+    } else {
+        STATE.time = 30;
+        updateTimerDisplay();
+        toast("¡Tiempo agotado! -1 Vida", IMG.abigail, "error");
+        updateUI();
+        
+        setTimeout(() => {
+            STATE.qIndex++;
+            if(STATE.qIndex >= (STATE.level === 0 ? 5 : 20)) {
+                nextLevel();
+            } else {
+                loadQuestion();
+            }
+        }, 1500);
+    }
+}
+
 // AUDIO
 const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3");
 audio.loop = true; audio.volume = 0.3;
@@ -955,7 +1157,6 @@ function startGame(isNew) {
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('game-ui').style.display = 'flex';
     
-    // Ajustar tamaño del canvas
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
     
@@ -969,7 +1170,6 @@ function startGame(isNew) {
         toast("¡Regresaste! El tiempo se reinició a 30 segundos.", IMG.haley, "success");
     }
     
-    // INICIALIZAR CRONÓMETRO CIRCULAR 
     updateTimerDisplay();
     startTimer();
     
@@ -986,7 +1186,6 @@ function resizeCanvas() {
 }
 
 function initLevel() {
-    // Config UI Nivel
     document.querySelectorAll('.tab').forEach((t,i) => {
         t.className = `tab ${i===STATE.level?'active':''} ${i>STATE.level?'locked':''}`;
         t.onclick = i<=STATE.level ? (() => { 
@@ -997,8 +1196,7 @@ function initLevel() {
     
     document.getElementById('ui-level').innerText = STATE.level + 1;
     
-    // Config Minijuego
-    if(STATE.level === 0) { // Granja
+    if(STATE.level === 0) {
         if(STATE.farm.length === 0) {
             const canvas = document.getElementById('canvas');
             for(let r=0; r<6; r++) for(let c=0; c<8; c++) 
@@ -1011,10 +1209,10 @@ function initLevel() {
                     age:0
                 });
         }
-    } else if (STATE.level === 1) { // Pesca
+    } else if (STATE.level === 1) {
         document.getElementById('net-counter').style.display = 'block';
         document.getElementById('controls-hint').innerText = "ESPACIO: Tirar la red | Mover: Arriba/Abajo";
-    } else if (STATE.level === 2 || STATE.level === 3) { // Ganaderia/Mineria
+    } else if (STATE.level === 2 || STATE.level === 3) {
         STATE.entities = [];
         const canvas = document.getElementById('canvas');
         for(let i=0; i<6; i++) STATE.entities.push({
@@ -1048,19 +1246,16 @@ function renderInventory() {
     });
 }
 
-// PREGUNTAS
 function loadQuestion() {
-    // RESETEAR EL CRONÓMETRO A 30 SEGUNDOS
     resetTimer();
 
-    // Mecánica Riego (Nivel 1)
     if(STATE.level === 0 && STATE.qTotal > 0 && STATE.qTotal % 4 === 0) {
         STATE.farm.forEach(t => t.w = false);
         toast("¡La tierra se secó! Riega con la regadera (Tecla 2).", IMG.haley);
     }
 
     let qData;
-    let correctIndex; // Guardaremos el índice original de la respuesta correcta
+    let correctIndex;
     
     if(STATE.level === 0) {
         const seasons = ["Primavera", "Verano", "Otoño", "Invierno"];
@@ -1068,11 +1263,11 @@ function loadQuestion() {
         if(STATE.seasonIdx > 3) { nextLevel(); return; }
         document.getElementById('season-tag').innerText = seasons[STATE.seasonIdx];
         qData = DB[0][seasons[STATE.seasonIdx]][STATE.qIndex];
-        correctIndex = qData.c; // Guardamos el índice correcto original
+        correctIndex = qData.c;
     } else {
         if(STATE.qIndex >= 20) { nextLevel(); return; }
         qData = DB[STATE.level][STATE.qIndex];
-        correctIndex = qData.c; // Guardamos el índice correcto original
+        correctIndex = qData.c;
     }
 
     document.getElementById('q-text').innerText = qData.q;
@@ -1083,32 +1278,29 @@ function loadQuestion() {
     STATE.selOpt = -1;
     document.getElementById('btn-confirm').disabled = true;
 
-    // Mezclar opciones PERO mantener registro de cuál es la correcta
-    let opts = qData.a.map((txt, i) => ({txt, originalIndex: i})); // Guardamos índice original
+    let opts = qData.a.map((txt, i) => ({txt, originalIndex: i}));
     opts.sort(() => Math.random() - 0.5);
 
-    // Buscar cuál es la nueva posición de la respuesta correcta
     let newCorrectIndex = -1;
     opts.forEach((o, position) => {
         if(o.originalIndex === correctIndex) {
-            newCorrectIndex = position; // Esta es la nueva posición de la respuesta correcta
+            newCorrectIndex = position;
         }
     });
 
-    // Guardar la nueva posición de la respuesta correcta en STATE
     STATE.currentCorrectPosition = newCorrectIndex;
 
     opts.forEach((o, position) => {
         const btn = document.createElement('button');
         btn.className = 'opt';
         btn.innerText = o.txt;
-        btn.dataset.originalIndex = o.originalIndex; // Guardamos el índice original
-        btn.dataset.position = position; // Guardamos la posición actual
+        btn.dataset.originalIndex = o.originalIndex;
+        btn.dataset.position = position;
         
         btn.onclick = () => {
             document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-            STATE.selOpt = position; // Guardamos la POSICIÓN seleccionada, no el índice original
+            STATE.selOpt = position;
             document.getElementById('btn-confirm').disabled = false;
             document.getElementById('btn-confirm').style.background = "linear-gradient(to bottom, #3b82f6, #1d4ed8)";
             document.getElementById('btn-confirm').style.borderColor = "#60a5fa";
@@ -1120,7 +1312,6 @@ function loadQuestion() {
 }
 
 function checkAnswer() {
-    // PAUSAR EL CRONÓMETRO MIENTRAS SE REVISA LA RESPUESTA
     if(timerInterval) clearInterval(timerInterval);
 
     if(STATE.selOpt === -1) {
@@ -1129,16 +1320,13 @@ function checkAnswer() {
         return;
     }
 
-    // La respuesta correcta está en STATE.currentCorrectPosition
     const isCorrect = (STATE.selOpt === STATE.currentCorrectPosition);
 
     const options = document.querySelectorAll('.opt');
     options.forEach((opt, i) => {
-        // Marcar la respuesta correcta visualmente
         if(i === STATE.currentCorrectPosition) {
             opt.classList.add('correct');
         }
-        // Marcar la respuesta incorrecta si el usuario seleccionó algo incorrecto
         if(i === STATE.selOpt && !isCorrect) {
             opt.classList.add('incorrect');
         }
@@ -1160,7 +1348,6 @@ function checkAnswer() {
         STATE.qIndex++;
         saveProgress();
         
-        // Después de mostrar el resultado, reanudar el timer
         setTimeout(() => {
             startTimer();
             if(STATE.hearts<=0) { 
@@ -1171,6 +1358,7 @@ function checkAnswer() {
         }, 1500);
     }, 1500);
 }
+
 function gameOver() {
     alert("¡GAME OVER!\nPuntuación: " + STATE.score + "\nOro: " + STATE.gold + "g");
     localStorage.removeItem('sv_master_save');
@@ -1182,9 +1370,8 @@ function nextLevel() {
         STATE.level++; 
         STATE.qIndex=0; 
         STATE.seasonIdx=0;
-        STATE.gold += 500; // Bonus por completar nivel
-
-        // PAUSAR CRONÓMETRO DURANTE TRANSICIÓN
+        STATE.gold += 500;
+        
         if(timerInterval) clearInterval(timerInterval);
         
         toast(`¡NIVEL ${STATE.level} COMPLETADO! +500g 🪙`, IMG.abigail_h, "success");
@@ -1194,14 +1381,12 @@ function nextLevel() {
             alert("¡NIVEL COMPLETADO!\nDesbloqueaste: " + 
                   ["Agricultura", "Pesca", "Ganadería", "Minería", "Tecnología"][STATE.level-1]);
             
-            // REINICIAR CRONÓMETRO PARA NUEVO NIVEL
             resetTimer();
             startTimer();
             
             initLevel();
         }, 2000);
     } else {
-        // PAUSAR CRONÓMETRO AL TERMINAR EL JUEGO
         if(timerInterval) clearInterval(timerInterval);
         
         alert("¡JUEGO COMPLETADO! 🎉\nERES UN MAESTRO DE STARDEW VALLEY!\nPuntuación Final: " + STATE.score);
@@ -1239,7 +1424,6 @@ window.addEventListener('keyup', e => {
 });
 
 function updateGame() {
-    // Mover jugador (WASD)
     if(STATE.level !== 1) {
         const speed = STATE.level === 0 ? 4 : 3;
         if(keys['w'] || keys['arrowup']) STATE.player.y -= speed;
@@ -1247,16 +1431,13 @@ function updateGame() {
         if(keys['a'] || keys['arrowleft']) STATE.player.x -= speed;
         if(keys['d'] || keys['arrowright']) STATE.player.x += speed;
         
-        // Limites del canvas
         const canvas = document.getElementById('canvas');
         STATE.player.x = Math.max(0, Math.min(canvas.width - STATE.player.w, STATE.player.x));
         STATE.player.y = Math.max(0, Math.min(canvas.height - STATE.player.h, STATE.player.y));
         
-        // Sistema de crecimiento automático para cultivos regados
         if(STATE.level === 0) {
             STATE.farm.forEach(tile => {
                 if(tile.c !== -1 && tile.w && tile.age < 4) {
-                    // Crecimiento más lento (cada 5 segundos aproximadamente)
                     if(Math.random() < 0.001) {
                         tile.age = Math.min(4, tile.age + 1);
                         if(tile.age === 4) {
@@ -1268,19 +1449,15 @@ function updateGame() {
         }
     }
 
-    // Pesca Física
     if(STATE.level === 1) {
         if(keys['w'] || keys['arrowup']) STATE.fish.bY -= 4;
         if(keys['s'] || keys['arrowdown']) STATE.fish.bY += 4;
         
-        // Limites barra de pesca
         STATE.fish.bY = Math.max(0, Math.min(300, STATE.fish.bY));
         
-        // Pez IA
         if(Math.random()<0.03) STATE.fish.t = Math.random()*300;
         STATE.fish.y += (STATE.fish.t - STATE.fish.y)*0.03;
 
-        // Captura
         if(Math.abs(STATE.fish.y - STATE.fish.bY) < 40) {
             STATE.fish.p += 0.8;
             document.getElementById('net-counter').style.color = "#4ade80";
@@ -1314,7 +1491,7 @@ function handleAction() {
     const p = STATE.player;
     const canvas = document.getElementById('canvas');
     
-    if(STATE.level === 0) { // Granja
+    if(STATE.level === 0) {
         let t = STATE.farm.find(tile => 
             Math.abs(tile.x - (p.x+15)) < 25 && Math.abs(tile.y - (p.y+15)) < 25
         );
@@ -1323,7 +1500,6 @@ function handleAction() {
             const tools = ["Azada", "Regadera", "Fresa", "Arándano", "Calabaza", "Cosechar"];
             const tool = tools[STATE.toolIdx];
             
-            // 0: Azada - Arar tierra (grass -> dirt)
             if(STATE.toolIdx === 0 && t.t === 'grass') {
                 t.t = 'dirt';
                 showActionFeedback("🔱", t.x, t.y);
@@ -1331,13 +1507,11 @@ function handleAction() {
                 return;
             }
             
-            // 1: Regadera - Regar tierra arada
             if(STATE.toolIdx === 1 && t.t === 'dirt') {
                 t.w = true;
                 showActionFeedback("🚿", t.x, t.y);
                 updateActionCounter('water');
                 
-                // Si hay cultivo, acelerar crecimiento
                 if(t.c !== -1) {
                     t.age = Math.min(4, t.age + 1);
                     if(t.age >= 4) {
@@ -1347,7 +1521,6 @@ function handleAction() {
                 return;
             }
             
-            // 2-4: Plantar semillas (Fresa=2, Arándano=3, Calabaza=4)
             if(STATE.toolIdx >= 2 && STATE.toolIdx <= 4) {
                 if(t.t === 'dirt' && t.c === -1) {
                     t.c = STATE.toolIdx;
@@ -1359,20 +1532,17 @@ function handleAction() {
                 }
             }
             
-            // 5: Cosechar - Solo si el cultivo está maduro (age >= 4)
             if(STATE.toolIdx === 5) {
                 if(t.c !== -1 && t.age >= 4) {
-                    const rewards = [30, 40, 50]; // Fresa, Arándano, Calabaza
+                    const rewards = [30, 40, 50];
                     const reward = rewards[t.c-2] || 30;
                     
                     STATE.gold += reward;
                     STATE.score += 20;
                     
-                    // Mostrar recompensa
                     showActionFeedback(`+${reward}g`, t.x, t.y);
                     updateActionCounter('harvest');
                     
-                    // Resetear tile
                     t.c = -1;
                     t.t = 'dirt';
                     t.w = false;
@@ -1383,12 +1553,10 @@ function handleAction() {
                 }
             }
             
-            // Si ninguna acción fue válida
             showActionFeedback("❌", t.x, t.y);
         }
     }
     else if(STATE.level === 2 || STATE.level === 3) {
-        // Mantener el código original para otros niveles
         let e = STATE.entities.find(en => 
             Math.abs(en.x - p.x) < 50 && Math.abs(en.y - p.y) < 50
         );
@@ -1416,13 +1584,11 @@ function handleAction() {
     }
 }
 
-// Función para mostrar feedback de acciones
 function showActionFeedback(icon, x, y) {
     const canvas = document.getElementById('canvas');
     const feedback = document.createElement('div');
     feedback.innerHTML = icon;
     
-    // Calcular posición relativa al viewport
     const canvasRect = canvas.getBoundingClientRect();
     const posX = canvasRect.left + x;
     const posY = canvasRect.top + y;
@@ -1441,20 +1607,6 @@ function showActionFeedback(icon, x, y) {
     
     document.body.appendChild(feedback);
     
-    // Crear animación CSS si no existe
-    if (!document.getElementById('floatUpAnimation')) {
-        const style = document.createElement('style');
-        style.id = 'floatUpAnimation';
-        style.textContent = `
-            @keyframes floatUp {
-                0% { transform: translateY(0) scale(1); opacity: 1; }
-                100% { transform: translateY(-50px) scale(0.5); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Remover después de la animación
     setTimeout(() => {
         feedback.remove();
     }, 1000);
@@ -1464,12 +1616,10 @@ function drawGame() {
     const canvas = document.getElementById('canvas');
     ctx.clearRect(0,0,canvas.width,canvas.height);
     
-    if(STATE.level === 0) { // Granja Draw
-        // Fondo
+    if(STATE.level === 0) {
         ctx.fillStyle = '#1e293b';
         ctx.fillRect(0,0,canvas.width,canvas.height);
         
-        // Cuadrícula
         ctx.strokeStyle = 'rgba(255,255,255,0.1)';
         ctx.lineWidth = 1;
         for(let x=0; x<=canvas.width; x+=canvas.width/8) {
@@ -1485,7 +1635,6 @@ function drawGame() {
             ctx.stroke();
         }
         
-        // Tiles
         STATE.farm.forEach(t => {
             ctx.fillStyle = t.t==='grass' ? '#4ade80' : '#a16207';
             ctx.fillRect(t.x-20, t.y-20, 40, 40);
@@ -1498,20 +1647,17 @@ function drawGame() {
                 ctx.fillRect(t.x-20,t.y-20,40,40); 
             }
             
-            // En la parte de dibujar cultivos
             if(t.c !== -1) {
-                const colors = ['#ef4444', '#3b82f6', '#f59e0b']; // Rojo, Azul, Naranja
+                const colors = ['#ef4444', '#3b82f6', '#f59e0b'];
                 const plantIcons = ["🍓", "🫐", "🎃"];
                 
                 ctx.fillStyle = colors[t.c-2] || '#e67e22';
-                let size = 15 + (t.age * 4); // Crece de 15 a 31 pixels
+                let size = 15 + (t.age * 4);
                 
-                // Dibujar planta
                 ctx.beginPath();
                 ctx.arc(t.x, t.y, size/2, 0, Math.PI*2);
                 ctx.fill();
                 
-                // Dibujar icono si está maduro
                 if(t.age >= 4) {
                     ctx.fillStyle = 'white';
                     ctx.font = '20px Arial';
@@ -1519,7 +1665,6 @@ function drawGame() {
                     ctx.textBaseline = 'middle';
                     ctx.fillText(plantIcons[t.c-2] || "🌱", t.x, t.y);
                     
-                    // Efecto brillante para cultivo listo
                     ctx.strokeStyle = '#ffd700';
                     ctx.lineWidth = 2;
                     ctx.setLineDash([5, 3]);
@@ -1527,7 +1672,6 @@ function drawGame() {
                     ctx.setLineDash([]);
                 }
                 
-                // Indicador de crecimiento
                 ctx.fillStyle = 'white';
                 ctx.font = '12px VT323';
                 ctx.textAlign = 'center';
@@ -1535,52 +1679,44 @@ function drawGame() {
             }
         });
     } 
-    else if (STATE.level === 1) { // Pesca Draw
-        // Fondo agua
+    else if (STATE.level === 1) {
         const gradient = ctx.createLinearGradient(0,0,0,canvas.height);
         gradient.addColorStop(0, '#0ea5e9');
         gradient.addColorStop(1, '#0369a1');
         ctx.fillStyle = gradient;
         ctx.fillRect(0,0,canvas.width,canvas.height);
         
-        // Barra de pesca
         ctx.fillStyle = "#1e293b";
         ctx.fillRect(canvas.width/2 - 25, 20, 50, canvas.height-40);
         
-        // Red
         ctx.fillStyle = "#4ade80";
         ctx.fillRect(canvas.width/2 - 20, 20+STATE.fish.bY, 40, 80);
         
-        // Pez
         ctx.fillStyle = "#fbbf24";
         ctx.beginPath();
         ctx.ellipse(canvas.width/2 - 10, 20+STATE.fish.y, 15, 10, 0, 0, Math.PI*2);
         ctx.fill();
         
-        // Ojo del pez
         ctx.fillStyle = "black";
         ctx.beginPath();
         ctx.arc(canvas.width/2 - 15, 20+STATE.fish.y, 3, 0, Math.PI*2);
         ctx.fill();
         
-        // Barra de progreso
         ctx.fillStyle = "#374151";
         ctx.fillRect(canvas.width/2 + 40, 20, 20, canvas.height-40);
         const progressHeight = (STATE.fish.p/100) * (canvas.height-40);
         ctx.fillStyle = STATE.fish.p > 70 ? "#4ade80" : STATE.fish.p > 30 ? "#fbbf24" : "#ef4444";
         ctx.fillRect(canvas.width/2 + 40, 20 + (canvas.height-40 - progressHeight), 20, progressHeight);
         
-        // Texto de progreso
         ctx.fillStyle = "white";
         ctx.font = "20px VT323";
         ctx.textAlign = "center";
         ctx.fillText(`${Math.round(STATE.fish.p)}%`, canvas.width/2 + 50, canvas.height - 10);
     }
-    else { // Otros niveles
+    else {
         ctx.fillStyle = STATE.level===3 ? "#1c1917" : "#14532d";
         ctx.fillRect(0,0,canvas.width,canvas.height);
         
-        // Patrón de fondo
         ctx.strokeStyle = STATE.level===3 ? "rgba(120,113,108,0.3)" : "rgba(134,239,172,0.3)";
         ctx.lineWidth = 1;
         for(let x=0; x<canvas.width; x+=40) {
@@ -1590,14 +1726,12 @@ function drawGame() {
         }
         
         STATE.entities.forEach(e => {
-            // Dibujar entidad
             if(e.type==='rock') {
                 ctx.fillStyle = '#78716c';
                 ctx.beginPath();
                 ctx.arc(e.x+20, e.y+20, 20, 0, Math.PI*2);
                 ctx.fill();
                 
-                // Grietas
                 ctx.strokeStyle = '#57534e';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
@@ -1607,20 +1741,17 @@ function drawGame() {
                 ctx.lineTo(e.x+10, e.y+30);
                 ctx.stroke();
                 
-                // HP
                 ctx.fillStyle = 'white';
                 ctx.font = '14px VT323';
                 ctx.textAlign = 'center';
                 ctx.fillText(e.hp + "/3", e.x+20, e.y+45);
             } else {
-                // Animales
                 ctx.fillStyle = e.type==='cow' ? '#f5f5f4' : '#fecaca';
                 ctx.fillRect(e.x, e.y, 40, 40);
                 ctx.strokeStyle = e.type==='cow' ? '#a8a29e' : '#f87171';
                 ctx.lineWidth = 2;
                 ctx.strokeRect(e.x, e.y, 40, 40);
                 
-                // Cara
                 ctx.fillStyle = 'black';
                 ctx.fillRect(e.x+10, e.y+15, 5, 5);
                 ctx.fillRect(e.x+25, e.y+15, 5, 5);
@@ -1637,18 +1768,15 @@ function drawGame() {
     }
 
     if(STATE.level !== 1) {
-        // Dibujar jugador
         ctx.fillStyle = "#3b82f6";
         ctx.beginPath();
         ctx.arc(STATE.player.x+15, STATE.player.y+15, 15, 0, Math.PI*2);
         ctx.fill();
         
-        // Borde del jugador
         ctx.strokeStyle = "#60a5fa";
         ctx.lineWidth = 3;
         ctx.stroke();
         
-        // Herramienta equipada
         const tools = ["🔱","🚿","🍓","🫐","🎃","✂️"];
         ctx.fillStyle = "white";
         ctx.font = "20px VT323";
@@ -1669,8 +1797,7 @@ function setNPC(msg, imgType = "normal") {
     const npcImg = document.getElementById('npc-img');
     const npcText = document.getElementById('npc-text');
     
-    // Determinar qué imagen usar
-    let imgSrc = IMG.haley; // Por defecto
+    let imgSrc = IMG.haley;
     
     if(imgType === "happy") {
         imgSrc = IMG.haley_h;
@@ -1680,7 +1807,6 @@ function setNPC(msg, imgType = "normal") {
         imgSrc = IMG.abigail_h;
     }
     
-    // Precargar imagen para evitar círculos blancos
     const preloadImg = new Image();
     preloadImg.src = imgSrc;
     preloadImg.onload = () => {
@@ -1688,7 +1814,6 @@ function setNPC(msg, imgType = "normal") {
         npcImg.style.opacity = "1";
     };
     
-    // Si hay error, usar placeholder
     preloadImg.onerror = () => {
         npcImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23333'/%3E%3C/svg%3E";
         npcImg.style.opacity = "0.7";
@@ -1700,7 +1825,6 @@ function setNPC(msg, imgType = "normal") {
 function toast(msg, img, type = "info") {
     const toastsContainer = document.getElementById('toasts');
     
-    // Limitar a 3 toasts máximo
     if(toastsContainer.children.length >= 3) {
         toastsContainer.removeChild(toastsContainer.firstChild);
     }
@@ -1708,7 +1832,6 @@ function toast(msg, img, type = "info") {
     const t = document.createElement('div'); 
     t.className = `toast ${type}`;
     
-    // Colores según tipo
     const colors = {
         info: {bg: "#3b82f6", border: "#60a5fa"},
         success: {bg: "#10b981", border: "#34d399"},
@@ -1728,7 +1851,6 @@ function toast(msg, img, type = "info") {
     
     toastsContainer.appendChild(t);
     
-    // Auto-remover después de 2.5 segundos (más rápido)
     setTimeout(() => {
         t.style.animation = 'slideIn 0.3s ease-out reverse';
         setTimeout(() => t.remove(), 300);
@@ -1736,7 +1858,6 @@ function toast(msg, img, type = "info") {
 }
 
 function darkenColor(color, percent) {
-    // Simple función para oscurecer colores
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
     const R = (num >> 16) - amt;
@@ -1760,7 +1881,6 @@ function buy(item) {
             toast("+30 segundos ⏳", IMG.haley_h);
         }
         if(item==='hint') {
-            // Usar STATE.currentCorrectPosition que es la posición actual de la respuesta correcta
             const correctPosition = STATE.currentCorrectPosition;
             const options = document.querySelectorAll('.opt');
             
@@ -1785,71 +1905,9 @@ function buy(item) {
         toast("¡No tienes suficiente oro! 🪙", IMG.haley);
     }
 }
+
 function saveProgress() { 
     localStorage.setItem('sv_master_save', JSON.stringify(STATE)); 
-}
-
-// ==================== SISTEMA DE CRONÓMETRO MEJORADO ====================
-let timerInterval;
-
-function startTimer() {
-    if(timerInterval) clearInterval(timerInterval);
-    
-    timerInterval = setInterval(() => {
-        if(document.getElementById('start-screen').style.display === 'none' && STATE.time > 0) {
-            STATE.time--;
-            updateTimerDisplay();
-            
-            if(STATE.time <= 0) {
-                timeOut();
-            }
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    const timeElement = document.getElementById('ui-time');
-    
-    // Actualizar texto
-    timeElement.innerText = STATE.time + 's';
-    
-    // Cambiar color según tiempo restante
-    if(STATE.time <= 10) {
-        timeElement.style.color = "#ef4444";
-    } else if(STATE.time <= 20) {
-        timeElement.style.color = "#fbbf24";
-    } else {
-        timeElement.style.color = "white";
-    }
-}
-
-function timeOut() {
-    STATE.hearts--;
-    
-    if(STATE.hearts <= 0) {
-        gameOver();
-    } else {
-        // Resetear a 30 segundos para siguiente pregunta
-        STATE.time = 30;
-        updateTimerDisplay();
-        toast("¡Tiempo agotado! -1 Vida", IMG.abigail, "error");
-        updateUI();
-        
-        // Pasar a siguiente pregunta automáticamente
-        setTimeout(() => {
-            STATE.qIndex++;
-            if(STATE.qIndex >= (STATE.level === 0 ? 5 : 20)) {
-                nextLevel();
-            } else {
-                loadQuestion();
-            }
-        }, 1500);
-    }
-}
-
-function resetTimer() {
-    STATE.time = 30;
-    updateTimerDisplay();
 }
 
 // Sistema de estadísticas de acciones
@@ -1864,7 +1922,6 @@ function updateActionCounter(action) {
     if(actionStats[action] !== undefined) {
         actionStats[action]++;
         
-        // Mostrar contador flotante si hay muchas acciones
         if(actionStats[action] % 5 === 0) {
             const messages = {
                 plant: `🌱 x${actionStats.plant}`,
@@ -1873,7 +1930,6 @@ function updateActionCounter(action) {
                 plow: `🔱 x${actionStats.plow}`
             };
             
-            // Solo mostrar si hay más de 1
             if(actionStats[action] > 1) {
                 showActionFeedback(messages[action], 100, 50);
             }
@@ -1887,7 +1943,27 @@ window.addEventListener('load', () => {
     canvas.width = canvas.parentElement.clientWidth;
     canvas.height = canvas.parentElement.clientHeight - 45;
     
-    // Para debug: verificar que los botones funcionen
+    // Agregar animaciones CSS para la silueta del cronómetro
+    if (!document.getElementById('timer-animations')) {
+        const style = document.createElement('style');
+        style.id = 'timer-animations';
+        style.textContent = `
+            @keyframes walk {
+                0% { transform: translateY(-50%) translateX(0); }
+                100% { transform: translateY(-50%) translateX(8px); }
+            }
+            @keyframes panic {
+                0% { transform: translateY(-50%) translateX(0) rotate(-8deg); }
+                100% { transform: translateY(-50%) translateX(12px) rotate(8deg); }
+            }
+            @keyframes floatParticle {
+                0% { transform: translate(0, 0) scale(1); opacity: 1; }
+                100% { transform: translate(var(--x, 20px), -50px) scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
     console.log("Página cargada. Botones disponibles:");
     console.log("toggleAudio:", typeof toggleAudio);
     console.log("startGame:", typeof startGame);
